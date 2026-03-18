@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="utf-8" />
+  <title>PV 計算器</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --accent:#0b4f8a;
+      --danger:#c62828;
+      --input-bg:#fff;
+      --input-border:#cfcfcf;
+      --has-value-border:#2b7bd6;
+      --has-value-bg:#f0f7ff;
+    }
+    body { font-family: "Noto Sans TC", Arial, sans-serif; margin:20px; color:#222; }
+    .section { border:1px solid #e8e8e8; padding:14px; margin-bottom:14px; border-radius:8px; background:#fafafa; }
+    .row { display:flex; align-items:center; gap:12px; margin:8px 0; flex-wrap:wrap; }
+    label { width:360px; color:#333; }
+    input[type="text"].num-input {
+      width:180px; padding:8px 10px; border:1px solid var(--input-border);
+      border-radius:8px; text-align:right; background:var(--input-bg); font-size:14px;
+      transition: box-shadow .12s, border-color .12s, background-color .12s;
+    }
+    input.num-input:focus { outline:2px solid rgba(11,79,138,0.12); border-color:var(--accent); }
+    input.num-input.has-value { border:2px solid var(--has-value-border); background:var(--has-value-bg); box-shadow:0 2px 6px rgba(43,123,214,0.12); }
+    input.num-input.negative { border-color:var(--danger); color:var(--danger); box-shadow:0 2px 6px rgba(198,40,40,0.06); }
+    input.num-input.invalid { border-color:var(--danger); box-shadow:0 2px 6px rgba(198,40,40,0.06); }
+    input.pv-gift-input.gift-has-value { border:2px solid var(--danger) !important; box-shadow:0 2px 6px rgba(198,40,40,0.06); }
+    h1 { margin:0 0 12px 0; color:var(--accent); font-size:22px; }
+    h3 { margin:6px 0; color:var(--accent); display:flex; align-items:center; gap:12px; }
+    .value { font-weight:700; min-width:140px; display:inline-block; text-align:right; }
+    .positive { color:var(--accent); }
+    .negative { color:var(--danger); }
+    .readonly { padding:6px 10px; background:#fff; border:1px solid #e8e8e8; border-radius:6px; min-width:160px; text-align:right; }
+    .muted { color:#666; font-size:13px; margin-left:8px; }
+    .hidden { display:none; }
+    .pv-label { width:300px; }
+    .col-header { width:220px; text-align:right; font-weight:700; margin-left:8px; }
+    pre { background:#f7f7f7; padding:10px; border-radius:6px; overflow:auto; white-space:pre-wrap; }
+    .simple-line { font-weight:700; font-size:16px; padding:10px; background:#fff; border-radius:6px; border:1px solid #e8e8e8; display:inline-block; }
+    .z-note { font-size:14px; color:var(--danger); font-weight:700; margin-top:8px; display:block; }
+    .b-section input.num-input { width:160px; padding:10px 12px; font-size:16px; border:2px solid #9fb8d6; border-radius:10px; background:#fff; }
+    #PV_value { font-size:20px; padding-left:6px; padding-right:6px; }
+    .b-title { font-weight:700; font-size:15px; margin-bottom:6px; }
+    .warn-inline { color:var(--danger); font-weight:700; margin-left:8px; }
+    .small { font-size:13px; color:#666; }
+    @media (max-width:900px){ label { width:200px; } .col-header { display:none; } }
+  </style>
+</head>
+<body>
+  <h1>PV 計算器</h1>
+
+  <!-- X -->
+  <div class="section" id="section-X">
+    <h3>實際銷售總額 (X)：<span id="X_value" class="value positive"></span></h3>
+    <div class="row">
+      <label>訂單金額（X）：</label>
+      <input type="text" id="X" class="num-input" data-raw="" placeholder="輸入 X">
+      <div class="muted">輸入後即時計算（千分位顯示）</div>
+    </div>
+  </div>
+
+  <!-- Y -->
+  <div class="section" id="section-Y">
+    <h3>產品應付總額(依標準價格) (Y)：<span id="Y_value" class="value positive"></span></h3>
+    <div class="row"><label>主產品：</label><input type="text" id="y_main" class="num-input" data-raw=""></div>
+    <div class="row"><label>延長授權：</label><input type="text" id="y_extend" class="num-input" data-raw=""></div>
+    <div class="row"><label>其他費用(如書籍費)：</label><input type="text" id="y_otherfee" class="num-input" data-raw=""></div>
+    <div class="row"><label>手續費：</label><input type="text" id="y_servicefee" class="num-input" data-raw=""></div>
+
+    <h4 class="muted">Y 區可補充項目（非必填）</h4>
+    <div class="row"><label>3C類-智能筆：</label><input type="text" id="pen" class="num-input" data-raw=""></div>
+    <div class="row"><label>3C類-2T硬碟：</label><input type="text" id="hdd" class="num-input" data-raw=""></div>
+    <div class="row"><label>其他3C類：</label><input type="text" id="other3c" class="num-input" data-raw=""></div>
+    <div class="row"><label>HIPASS：</label><input type="text" id="hipass" class="num-input" data-raw=""></div>
+    <div class="row"><label>好師到點數：</label><input type="text" id="points" class="num-input" data-raw=""></div>
+    <div class="row"><label>選才導航：</label><input type="text" id="nav" class="num-input" data-raw=""></div>
+  </div>
+
+  <!-- Z -->
+  <div class="section" id="section-Z">
+    <h3>萬事通系列產品標準價格 (Z = 主產品 + 延長授權 + 其他費用(如書籍費) + 手續費)：<span id="Z_value" class="value positive"></span></h3>
+    <div class="row"><label>主產品（來自 Y）：</label><div id="z_main_display" class="readonly"></div></div>
+    <div class="row"><label>延長授權（來自 Y）：</label><div id="z_extend_display" class="readonly"></div></div>
+    <div class="row"><label>其他費用（來自 Y）：</label><div id="z_otherfee_display" class="readonly"></div></div>
+    <div class="row"><label>手續費（來自 Y）：</label><div id="z_servicefee_display" class="readonly"></div></div>
+
+    <div id="section-Z-addons" class="hidden" style="margin-top:12px;">
+      <h4>Z 區可補充加購項目（非必填） — 溢收：<span id="surplus_amount" class="value positive"></span></h4>
+
+      <div class="z-note">&gt;&gt;(若溢收金額不足加購項目之優惠價，會直接依實際溢收金額換算對應PV值 ; 請在最後下方的B-PV小計裡扣除3C產品或各類服務項目之對應PV)</div>
+
+      <div class="row">
+        <label>3C類-智能筆：</label>
+        <input type="text" id="z_pen" class="num-input" data-raw="" placeholder="智能筆">
+        <span id="z_pen_warn" class="warn-inline hidden">需寫產品優惠價</span>
+        <span id="z_pen_warn2" class="warn-inline hidden">超過可用溢收</span>
+      </div>
+
+      <div class="row">
+        <label>3C類-2T硬碟：</label>
+        <input type="text" id="z_hdd" class="num-input" data-raw="" placeholder="2T 硬碟">
+        <span id="z_hdd_warn" class="warn-inline hidden">需寫產品優惠價</span>
+        <span id="z_hdd_warn2" class="warn-inline hidden">超過可用溢收</span>
+      </div>
+
+      <div class="row">
+        <label>其他3C類：</label>
+        <input type="text" id="z_other3c" class="num-input" data-raw="" placeholder="其他3C">
+        <span id="z_other3c_warn" class="warn-inline hidden">需寫產品優惠價</span>
+        <span id="z_other3c_warn2" class="warn-inline hidden">超過可用溢收</span>
+      </div>
+
+      <div class="row">
+        <label>HIPASS：</label>
+        <input type="text" id="z_hipass" class="num-input" data-raw="" placeholder="HIPASS">
+        <span id="z_hipass_warn" class="warn-inline hidden">需寫產品優惠價</span>
+        <span id="z_hipass_warn2" class="warn-inline hidden">超過可用溢收</span>
+      </div>
+
+      <div class="row">
+        <label>好師到點數：</label>
+        <input type="text" id="z_points" class="num-input" data-raw="" placeholder="點數">
+        <span id="z_points_warn" class="warn-inline hidden">需寫產品優惠價</span>
+        <span id="z_points_warn2" class="warn-inline hidden">超過可用溢收</span>
+      </div>
+
+      <div class="row">
+        <label>選才導航：</label>
+        <input type="text" id="z_nav" class="num-input" data-raw="" placeholder="導航">
+        <span id="z_nav_warn" class="warn-inline hidden">需寫產品優惠價</span>
+        <span id="z_nav_warn2" class="warn-inline hidden">超過可用溢收</span>
+      </div>
+
+      <div class="row">
+        <label><strong>Z 區小計：</strong></label>
+        <span id="Z_addons_value" class="value positive"></span>
+        <div class="muted">（不可超過溢收）</div>
+      </div>
+
+      <div class="row">
+        <label><strong>&gt;&gt;實際溢收金額換算對應PV值：</strong></label>
+        <span id="surplus_remaining" class="value positive"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PV 組成 A / B -->
+  <div class="section" id="section-PVparts">
+    <h3>
+      PV 組成
+      <span id="pvComposeNotice" class="warn-inline hidden">&gt;&gt;左側 PV 欄位已鎖定，請在右側扣除相對應產品PV。</span>
+    </h3>
+
+    <div style="border:1px dashed #e8e8e8; padding:10px; border-radius:6px; margin-bottom:10px;">
+      <div class="muted">A — PV 主產品</div>
+      <div class="row"><label>PV-主產品 (A)：</label><input type="text" id="A" class="num-input" data-raw=""></div>
+    </div>
+
+    <div class="b-section" style="border:1px dashed #e8e8e8; padding:10px; border-radius:6px;">
+      <div class="b-title">B — PV 小計</div>
+
+      <!-- 調整：將 "+ 相對應產品PV" 顯示在靠近「扣除相對應產品PV」的欄位上方 -->
+      <div class="row" style="margin-top:6px;">
+        <div style="width:300px;"></div>
+        <div style="width:160px;">
+          <strong style="display:block; margin-bottom:6px; text-align:right;">+ 相對應產品PV</strong>
+        </div>
+        <div style="width:80px;"></div>
+        <div class="col-header">扣除相對應產品PV</div>
+      </div>
+
+      <div class="row pv-row">
+        <label class="pv-label">PV-延長授權：</label>
+        <input class="num-input" type="text" id="pv_extend" data-raw="">
+        <div style="width:80px;"></div>
+        <input class="num-input pv-gift-input" type="text" id="pv_extend_gift" data-raw="" placeholder="請輸入負數">
+        <span id="pv_extend_gift_icon" class="tooltip hidden">!
+          <span class="tooltiptext">請輸入負值</span>
+        </span>
+      </div>
+
+      <!-- 這些左側欄位（+ 相對應產品PV）已鎖住；右側（扣除相對應產品PV）仍可輸入 -->
+      <div class="row pv-row">
+        <label class="pv-label">PV-3C類-智能筆：</label>
+        <input class="num-input" type="text" id="pv_pen" data-raw="" disabled>
+        <div style="width:80px;"></div>
+        <input class="num-input pv-gift-input" type="text" id="pv_pen_gift" data-raw="" placeholder="請輸入負數">
+        <span id="pv_pen_gift_icon" class="tooltip hidden">!
+          <span class="tooltiptext">請輸入負值</span>
+        </span>
+      </div>
+
+      <div class="row pv-row">
+        <label class="pv-label">PV-3C類-2T硬碟：</label>
+        <input class="num-input" type="text" id="pv_hdd" data-raw="" disabled>
+        <div style="width:80px;"></div>
+        <input class="num-input pv-gift-input" type="text" id="pv_hdd_gift" data-raw="" placeholder="請輸入負數">
+        <span id="pv_hdd_gift_icon" class="tooltip hidden">!
+          <span class="tooltiptext">請輸入負值</span>
+        </span>
+      </div>
+
+      <div class="row pv-row">
+        <label class="pv-label">PV-HIPASS：</label>
+        <input class="num-input" type="text" id="pv_hipass" data-raw="" disabled>
+        <div style="width:80px;"></div>
+        <input class="num-input pv-gift-input" type="text" id="pv_hipass_gift" data-raw="" placeholder="請輸入負數">
+        <span id="pv_hipass_gift_icon" class="tooltip hidden">!
+          <span class="tooltiptext">請輸入負值</span>
+        </span>
+      </div>
+
+      <div class="row pv-row">
+        <label class="pv-label">PV-其他3C類：</label>
+        <input class="num-input" type="text" id="pv_other3c" data-raw="" disabled>
+        <div style="width:80px;"></div>
+        <input class="num-input pv-gift-input" type="text" id="pv_other3c_gift" data-raw="" placeholder="請輸入負數">
+        <span id="pv_other3c_gift_icon" class="tooltip hidden">!
+          <span class="tooltiptext">請輸入負值</span>
+        </span>
+      </div>
+
+      <div class="row pv-row">
+        <label class="pv-label">PV-好師到點數：</label>
+        <input class="num-input" type="text" id="pv_points" data-raw="" disabled>
+        <div style="width:80px;"></div>
+        <input class="num-input pv-gift-input" type="text" id="pv_points_gift" data-raw="" placeholder="請輸入負數">
+        <span id="pv_points_gift_icon" class="tooltip hidden">!
+          <span class="tooltiptext">請輸入負值</span>
+        </span>
+      </div>
+      <!-- 鎖住左側欄位結束 -->
+
+      <div class="row pv-row">
+        <label class="pv-label">PV-選才導航：</label>
+        <input class="num-input" type="text" id="pv_nav" data-raw="">
+        <div style="width:80px;"></div>
+        <input class="num-input pv-gift-input" type="text" id="pv_nav_gift" data-raw="" placeholder="請輸入負數">
+        <span id="pv_nav_gift_icon" class="tooltip hidden">!
+          <span class="tooltiptext">請輸入負值</span>
+        </span>
+      </div>
+
+      <div class="row"><label><strong>B 小計：</strong></label><span id="B_value" class="value positive"></span></div>
+    </div>
+  </div>
+
+  <!-- 結果 -->
+  <div class="section" id="section-result">
+    <h3>PV 結果：<span id="PV_value" class="value positive"></span></h3>
+
+    <div style="margin-top:12px;">
+      <div class="small">簡潔計算式（依照套用公式直接帶入數字）：</div>
+      <div id="simpleCalc" class="simple-line">PV = -</div>
+    </div>
+
+    <div style="margin-top:12px;">
+      <div class="small">(數值供參考)</div>
+      <pre id="calcDisplay"></pre>
+    </div>
+  </div>
+
+  <script>
+    const nf = new Intl.NumberFormat('zh-TW');
+
+    function parseInputToNumber(str){
+      if (str === null || str === undefined) return NaN;
+      const cleaned = String(str).replace(/,/g,'').trim();
+      if (cleaned === "" || cleaned === "-" ) return NaN;
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : NaN;
+    }
+
+    function formatNumberForDisplay(n){
+      if (!Number.isFinite(n)) return "";
+      return nf.format(Math.round(n));
+    }
+
+    function applyFormattingToInput(el){
+      if(!el) return;
+      const raw = el.dataset.raw;
+      const num = parseInputToNumber(raw);
+      el.classList.remove('invalid','gift-has-value','negative','has-value');
+      if (!Number.isFinite(num)) {
+        el.value = "";
+        return;
+      }
+      el.value = formatNumberForDisplay(num);
+      if (num < 0) el.classList.add('negative');
+      el.classList.add('has-value');
+    }
+
+    function onFocusRemoveFormat(e){
+      const el = e.target;
+      const raw = el.dataset.raw;
+      if (raw === undefined || raw === "") { el.value = ""; el.classList.remove('has-value'); return; }
+      el.value = String(raw);
+      const num = parseInputToNumber(raw);
+      if (Number.isFinite(num) && num < 0) el.classList.add('negative'); else el.classList.remove('negative');
+    }
+
+    function onBlurFormat(e){
+      const el = e.target;
+      const v = el.value;
+      const num = parseInputToNumber(v);
+      if (Number.isFinite(num)) {
+        el.dataset.raw = String(num);
+      } else {
+        el.dataset.raw = "";
+      }
+      applyFormattingToInput(el);
+      calculatePV();
+    }
+
+    function onInputLive(e){
+      const el = e.target;
+      const v = el.value;
+      const num = parseInputToNumber(v);
+      if (Number.isFinite(num)) {
+        el.dataset.raw = String(num);
+        if (num < 0) el.classList.add('negative'); else el.classList.remove('negative');
+        el.classList.add('has-value');
+      } else {
+        if (v.trim() === "-") {
+          el.dataset.raw = "-";
+          el.classList.add('negative');
+        } else {
+          el.dataset.raw = "";
+          el.classList.remove('negative');
+          el.classList.remove('has-value');
+        }
+      }
+    }
+
+    function attachNumInputHandlers(){
+      document.querySelectorAll('.num-input').forEach(el=>{
+        el.addEventListener('focus', onFocusRemoveFormat);
+        el.addEventListener('blur', onBlurFormat);
+        el.addEventListener('input', onInputLive);
+        if (!el.dataset.raw) el.dataset.raw = "";
+      });
+    }
+
+    function getNumFromEl(id){
+      const el = document.getElementById(id);
+      if (!el) return 0;
+      const raw = el.dataset.raw;
+      const n = parseInputToNumber(raw);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function setText(id, n){
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (!Number.isFinite(n)) { el.innerText = ""; el.className = "value positive"; return; }
+      el.innerText = formatNumberForDisplay(n);
+      el.className = (n < 0) ? "value negative" : "value positive";
+    }
+
+    function roundDownHundred(val){
+      if (!Number.isFinite(val)) return 0;
+      if (val >= 0) return Math.floor(val / 100) * 100;
+      return Math.ceil(val / 100) * 100;
+    }
+
+    function computeZBase(){
+      const y_main = getNumFromEl("y_main");
+      const y_extend = getNumFromEl("y_extend");
+      const y_otherfee = getNumFromEl("y_otherfee");
+      const y_servicefee = getNumFromEl("y_servicefee");
+      return { y_main, y_extend, y_otherfee, y_servicefee, Z: y_main + y_extend + y_otherfee + y_servicefee };
+    }
+
+    function readZAddonsRaw(){
+      const ids=["z_pen","z_hdd","z_other3c","z_hipass","z_points","z_nav"];
+      let sum=0; ids.forEach(id=>{ sum += getNumFromEl(id); });
+      return { sum };
+    }
+
+    const zToYMap = {
+      z_pen: "pen",
+      z_hdd: "hdd",
+      z_other3c: "other3c",
+      z_hipass: "hipass",
+      z_points: "points",
+      z_nav: "nav"
+    };
+
+    function showOverWarn(id) {
+      const warn = document.getElementById(id + "_warn2");
+      if (!warn) return;
+      warn.classList.remove("hidden");
+      setTimeout(()=>{ warn.classList.add("hidden"); }, 2500);
+    }
+
+    function showNeedPromoWarn(id, message){
+      const warn = document.getElementById(id + "_warn");
+      if(!warn) return;
+      warn.innerText = message || "需寫產品優惠價";
+      warn.classList.remove("hidden");
+      setTimeout(()=>{ warn.classList.add("hidden"); }, 3000);
+    }
+
+    function validateZFieldAgainstY(zId, surplus) {
+      const yId = zToYMap[zId];
+      if (!yId) return;
+      const zEl = document.getElementById(zId);
+      const warnEl2 = document.getElementById(zId + "_warn2");
+      const warnEl = document.getElementById(zId + "_warn");
+
+      const zRaw = zEl?.dataset.raw;
+      const zVal = parseInputToNumber(zRaw);
+      const yVal = getNumFromEl(yId);
+
+      if (!Number.isFinite(zVal)) return;
+
+      if (Number.isFinite(yVal) && yVal !== 0 && yVal > surplus) {
+        if (zEl) {
+          zEl.dataset.raw = "";
+          applyFormattingToInput(zEl);
+          if (warnEl2) { warnEl2.classList.remove("hidden"); setTimeout(()=>warnEl2.classList.add("hidden"),2500); }
+          zEl.classList.add('invalid');
+          requestAnimationFrame(()=>{ try{ if (!zEl.disabled && zEl.offsetParent !== null) { zEl.focus(); zEl.select(); } }catch(e){} });
+        }
+        return;
+      }
+
+      if (Number.isFinite(zVal) && zVal !== 0 && Number.isFinite(yVal) && yVal !== 0) {
+        if (zVal !== yVal) {
+          if (zEl) {
+            zEl.dataset.raw = "";
+            applyFormattingToInput(zEl);
+            if (warnEl) { showNeedPromoWarn(zId, "需寫產品優惠價"); }
+            zEl.classList.add('invalid');
+            requestAnimationFrame(()=>{ try{ if (!zEl.disabled && zEl.offsetParent !== null) { zEl.focus(); zEl.select(); } }catch(e){} });
+          }
+          return;
+        } else {
+          if (warnEl) warnEl.classList.add('hidden');
+          if (zEl) zEl.classList.remove('invalid');
+        }
+      }
+    }
+
+    function onZAddonInput(changedId, evt){
+      try{
+        if (evt && evt.type === 'input') {
+          const el = document.getElementById(changedId);
+          if (el) applyFormattingToInput(el);
+          calculatePV();
+          return;
+        }
+
+        const Xraw = document.getElementById("X").dataset.raw;
+        const X = parseInputToNumber(Xraw);
+        const zBase = computeZBase();
+        const Zbase = zBase.Z;
+        const surplus = Math.max(0, Number.isFinite(X) ? X - Zbase : 0);
+
+        const zIds=["z_pen","z_hdd","z_other3c","z_hipass","z_points","z_nav"];
+
+        const changedEl = document.getElementById(changedId);
+        const attemptedRaw = changedEl ? changedEl.dataset.raw : "";
+        const attemptedVal = parseInputToNumber(attemptedRaw);
+
+        const current = zIds.map(id=>({id, val: parseInputToNumber(document.getElementById(id)?.dataset.raw) || 0}));
+        const total = current.reduce((s,c)=>s+c.val,0);
+
+        if (!changedEl || attemptedRaw === "" || !Number.isFinite(attemptedVal)) {
+          if (changedEl) applyFormattingToInput(changedEl);
+          calculatePV();
+          return;
+        }
+
+        const yId = zToYMap[changedId];
+        const yVal = getNumFromEl(yId);
+        if (!Number.isFinite(yVal) || yVal === 0) {
+          if (changedEl){
+            changedEl.dataset.raw = "";
+            applyFormattingToInput(changedEl);
+            changedEl.classList.add('invalid');
+            requestAnimationFrame(()=>{ try{ if (!changedEl.disabled && changedEl.offsetParent !== null) { changedEl.focus(); changedEl.select(); } }catch(e){} });
+          }
+          calculatePV();
+          return;
+        }
+
+        if (surplus <= 0 && total > 0){
+          if (changedEl){
+            changedEl.dataset.raw = "";
+            applyFormattingToInput(changedEl);
+            showOverWarn(changedId);
+            changedEl.classList.add('invalid');
+            requestAnimationFrame(()=>{ try{ if (!changedEl.disabled && changedEl.offsetParent !== null) { changedEl.focus(); changedEl.select(); } }catch(e){} });
+          }
+          calculatePV();
+          return;
+        }
+
+        if (total > surplus){
+          if (changedEl){
+            changedEl.dataset.raw = "";
+            applyFormattingToInput(changedEl);
+            showOverWarn(changedId);
+            changedEl.classList.add('invalid');
+            requestAnimationFrame(()=>{ try{ if (!changedEl.disabled && changedEl.offsetParent !== null) { changedEl.focus(); changedEl.select(); } }catch(e){} });
+          }
+          calculatePV();
+          return;
+        }
+
+        validateZFieldAgainstY(changedId, surplus);
+
+        if(changedEl){
+          const v = parseInputToNumber(changedEl.dataset.raw) || 0;
+          changedEl.dataset.prev = String(v);
+          changedEl.classList.remove('invalid');
+          applyFormattingToInput(changedEl);
+        }
+
+        calculatePV();
+      }catch(e){
+        console.error(e);
+      }
+    }
+
+    function validatePVGift(id){
+      const el = document.getElementById(id);
+      if(!el) return;
+      const icon = document.getElementById(id + "_icon");
+      const raw = el.dataset.raw;
+      const v = parseInputToNumber(raw);
+      el.classList.remove('invalid');
+      el.classList.remove('gift-has-value');
+      if(icon) icon.classList.add('hidden'), icon.classList.remove('show');
+
+      if(!raw || raw === "") return;
+
+      el.classList.add('gift-has-value');
+
+      if(Number.isFinite(v) && v >= 0){
+        if(icon){
+          icon.classList.remove('hidden');
+          icon.classList.add('show');
+        }
+        el.classList.add('invalid');
+      } else {
+        if(icon) icon.classList.add('hidden'), icon.classList.remove('show');
+        el.classList.remove('invalid');
+      }
+    }
+
+    function calculatePV(){
+      try{
+        const zBase = computeZBase();
+        const Z = zBase.Z;
+        setText("Z_value", Z);
+        setText("z_main_display", zBase.y_main);
+        setText("z_extend_display", zBase.y_extend);
+        setText("z_otherfee_display", zBase.y_otherfee);
+        setText("z_servicefee_display", zBase.y_servicefee);
+
+        const pen = getNumFromEl("pen");
+        const hdd = getNumFromEl("hdd");
+        const other3c = getNumFromEl("other3c");
+        const hipass = getNumFromEl("hipass");
+        const points = getNumFromEl("points");
+        const nav = getNumFromEl("nav");
+
+        const Y = zBase.y_main + zBase.y_extend + zBase.y_otherfee + zBase.y_servicefee + pen + hdd + other3c + hipass + points + nav;
+        setText("Y_value", Y);
+
+        const Xraw = document.getElementById("X").dataset.raw;
+        const X = parseInputToNumber(Xraw);
+        setText("X_value", Number.isFinite(X) ? X : NaN);
+
+        const surplusRaw = Number.isFinite(X) ? X - Z : 0;
+        const surplus = Math.max(0, surplusRaw);
+
+        const condShowZAddons = Number.isFinite(X) && (X - Y < 0) && (X - Z > 0);
+        document.getElementById("section-Z-addons").classList.toggle("hidden", !condShowZAddons);
+        setText("surplus_amount", surplus);
+
+        const mapping = [
+          { y: "pen", z: "z_pen" },
+          { y: "hdd", z: "z_hdd" },
+          { y: "other3c", z: "z_other3c" },
+          { y: "hipass", z: "z_hipass" },
+          { y: "points", z: "z_points" },
+          { y: "nav", z: "z_nav" }
+        ];
+        mapping.forEach(m=>{
+          const yVal = getNumFromEl(m.y);
+          const zEl = document.getElementById(m.z);
+          const warn = document.getElementById(m.z + "_warn");
+          if (!zEl) return;
+          if (!Number.isFinite(yVal) || yVal === 0) {
+            zEl.disabled = true;
+            zEl.dataset.raw = "";
+            applyFormattingToInput(zEl);
+            if (warn) warn.classList.add("hidden");
+          } else {
+            zEl.disabled = false;
+            if (warn) warn.classList.add("hidden");
+          }
+        });
+
+        const zRaw = readZAddonsRaw();
+        let Z_addons = zRaw.sum;
+        if (Z_addons > surplus){
+          Z_addons = surplus;
+          const zIds=["z_pen","z_hdd","z_other3c","z_hipass","z_points","z_nav"];
+          let total=0;
+          zIds.forEach(id=>{
+            const v = getNumFromEl(id);
+            total += v;
+            const warn = document.getElementById(id + "_warn2");
+            if (!warn) return;
+            if (v > surplus || total > surplus) warn.classList.remove("hidden"); else warn.classList.add("hidden");
+          });
+        } else {
+          ["z_pen","z_hdd","z_other3c","z_hipass","z_points","z_nav"].forEach(id=>{
+            const warn = document.getElementById(id + "_warn2");
+            if (warn) warn.classList.add("hidden");
+          });
+        }
+        setText("Z_addons_value", Z_addons);
+
+        const remainingAmount = surplus - Z_addons;
+        setText("surplus_remaining", remainingAmount > 0 ? remainingAmount : 0);
+
+        const A = getNumFromEl("A");
+
+        function readPV(id){
+          const raw = getNumFromEl(id);
+          const giftRawRaw = parseInputToNumber(document.getElementById(id + "_gift")?.dataset.raw || "");
+          const giftRaw = Number.isFinite(giftRawRaw) ? giftRawRaw : 0;
+          if (giftRaw > 0){
+            return { raw, giftRaw:0, giftValue:0, value: raw };
+          } else {
+            const giftValue = giftRaw;
+            const value = raw + giftValue;
+            return { raw, giftRaw, giftValue, value };
+          }
+        }
+
+        const pvIds = ["pv_extend","pv_pen","pv_hdd","pv_hipass","pv_other3c","pv_points","pv_nav"];
+        const pv_objs = pvIds.map(id => ({ id, obj: readPV(id) }));
+        const B = pv_objs.reduce((s,p)=> s + p.obj.value, 0);
+        setText("B_value", B);
+
+        let diffXY = NaN, diffXZ = NaN;
+        let roundVal = 0;
+        if (Number.isFinite(X)){
+          diffXY = X - Y;
+          diffXZ = X - Z;
+          if (diffXY < 0 && diffXZ > 0) {
+            roundVal = roundDownHundred(X - (Z + Z_addons));
+          } else if (diffXY === 0) {
+            roundVal = roundDownHundred(X - Y);
+          } else if (diffXY < 0 && diffXZ < 0) {
+            roundVal = roundDownHundred(X - Z);
+          } else {
+            roundVal = roundDownHundred(X - Z);
+          }
+        }
+
+        let PV = NaN;
+        if (Number.isFinite(X)) PV = A + roundVal + B;
+
+        const pvEl = document.getElementById("PV_value");
+        if (Number.isFinite(PV)) {
+          pvEl.innerText = formatNumberForDisplay(PV);
+          pvEl.className = (PV < 0) ? "value negative" : "value positive";
+        } else {
+          pvEl.innerText = "";
+        }
+        const roundPartSign = roundVal >= 0 ? "+" : "-";
+        const roundPartAbs = Math.abs(roundVal);
+        const simpleLine = Number.isFinite(PV) ? `PV = ${formatNumberForDisplay(A)} ${roundPartSign}${formatNumberForDisplay(roundPartAbs)} ${B>=0? "+"+formatNumberForDisplay(B): formatNumberForDisplay(B)} = ${formatNumberForDisplay(PV)}` : `PV = -`;
+        document.getElementById("simpleCalc").innerText = simpleLine;
+
+        const noticeEl = document.getElementById("pvComposeNotice");
+        if(Number.isFinite(diffXY) && Number.isFinite(diffXZ) && diffXY < 0 && diffXZ < 0){
+          if(noticeEl) noticeEl.classList.remove("hidden");
+        } else {
+          if(noticeEl) noticeEl.classList.add("hidden");
+        }
+
+        ["pv_extend_gift","pv_pen_gift","pv_hdd_gift","pv_hipass_gift","pv_other3c_gift","pv_points_gift","pv_nav_gift"].forEach(id=>{
+          validatePVGift(id);
+        });
+
+        document.querySelectorAll('.num-input').forEach(el=>{
+          const raw = el.dataset.raw;
+          const n = parseInputToNumber(raw);
+          if (Number.isFinite(n) && n !== 0) el.classList.add('has-value'); else el.classList.remove('has-value');
+          if (Number.isFinite(n) && n < 0) el.classList.add('negative'); else el.classList.remove('negative');
+        });
+
+      }catch(err){
+        console.error(err);
+      }
+    }
+
+    function init(){
+      attachNumInputHandlers();
+
+      ["z_pen","z_hdd","z_other3c","z_hipass","z_points","z_nav"].forEach(id=>{
+        const el = document.getElementById(id);
+        if(!el) return;
+        el.addEventListener('blur', (e)=> onZAddonInput(id, e));
+      });
+
+      ["pv_extend_gift","pv_pen_gift","pv_hdd_gift","pv_hipass_gift","pv_other3c_gift","pv_points_gift","pv_nav_gift"].forEach(id=>{
+        const el = document.getElementById(id);
+        if(!el) return;
+        el.addEventListener('input', ()=> validatePVGift(id));
+        el.addEventListener('blur', ()=> validatePVGift(id));
+      });
+
+      const ids = ["X","y_main","y_extend","y_otherfee","y_servicefee","pen","hdd","other3c","hipass","points","nav","A",
+                   "pv_extend","pv_pen","pv_hdd","pv_hipass","pv_other3c","pv_points","pv_nav"];
+      ids.forEach(id=>{
+        const el=document.getElementById(id);
+        if(!el) return;
+        el.addEventListener('input', calculatePV);
+        el.addEventListener('blur', calculatePV);
+      });
+
+      // 初始：確保左側 + 相對應產品PV 的欄位為 disabled（使用者不可輸入）
+      ["pv_pen","pv_hdd","pv_hipass","pv_other3c","pv_points"].forEach(id=>{
+        const el = document.getElementById(id);
+        if (el) el.disabled = true;
+      });
+
+      document.querySelectorAll('.num-input').forEach(el=> applyFormattingToInput(el) );
+      calculatePV();
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
