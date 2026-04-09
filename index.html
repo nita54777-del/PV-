@@ -45,6 +45,8 @@
     .b-title { font-weight:700; font-size:15px; margin-bottom:6px; }
     .warn-inline { color:var(--danger); font-weight:700; margin-left:8px; }
     .small { font-size:13px; color:#666; }
+    .tooltip { margin-left:8px; color:var(--danger); font-weight:700; }
+    .notice-box { padding:10px; border-radius:6px; background:#fff3f3; border:1px solid #f2c2c2; color:var(--danger); font-weight:700; margin-top:8px; }
     @media (max-width:900px){ label { width:200px; } .col-header { display:none; } }
   </style>
 </head>
@@ -55,8 +57,8 @@
   <div class="section" id="section-X">
     <h3>實際銷售總額 (X)：<span id="X_value" class="value positive"></span></h3>
     <div class="row">
-      <label>訂單金額（X）：</label>
-      <input type="text" id="X" class="num-input" data-raw="" placeholder="輸入 X">
+      <label for="X">訂單金額（X）：</label>
+      <input type="text" id="X" class="num-input" data-raw="" placeholder="輸入 X" inputmode="numeric" pattern="[0-9\-\,]*">
       <div class="muted">輸入後即時計算（千分位顯示）</div>
     </div>
   </div>
@@ -64,27 +66,30 @@
   <!-- Y -->
   <div class="section" id="section-Y">
     <h3>產品應付總額(依標準價格) (Y)：<span id="Y_value" class="value positive"></span></h3>
-    <div class="row"><label>主產品：</label><input type="text" id="y_main" class="num-input" data-raw=""></div>
-    <div class="row"><label>延長授權：</label><input type="text" id="y_extend" class="num-input" data-raw=""></div>
-    <div class="row"><label>其他費用(如書籍費)：</label><input type="text" id="y_otherfee" class="num-input" data-raw=""></div>
-    <div class="row"><label>手續費：</label><input type="text" id="y_servicefee" class="num-input" data-raw=""></div>
+    <div class="row"><label for="y_main">主產品：</label><input type="text" id="y_main" class="num-input" data-raw="" inputmode="numeric"></div>
+    <div class="row"><label for="y_extend">延長授權：</label><input type="text" id="y_extend" class="num-input" data-raw="" inputmode="numeric"></div>
+    <div class="row"><label for="y_otherfee">其他費用(如書籍費)：</label><input type="text" id="y_otherfee" class="num-input" data-raw="" inputmode="numeric"></div>
+    <div class="row"><label for="y_servicefee">手續費：</label><input type="text" id="y_servicefee" class="num-input" data-raw="" inputmode="numeric"></div>
 
     <h4 class="muted">Y 區可補充項目（非必填）</h4>
-    <div class="row"><label>3C類-智能筆：</label><input type="text" id="pen" class="num-input" data-raw=""></div>
-    <div class="row"><label>3C類-2T硬碟：</label><input type="text" id="hdd" class="num-input" data-raw=""></div>
-    <div class="row"><label>其他3C類：</label><input type="text" id="other3c" class="num-input" data-raw=""></div>
-    <div class="row"><label>HIPASS：</label><input type="text" id="hipass" class="num-input" data-raw=""></div>
-    <div class="row"><label>好師到點數：</label><input type="text" id="points" class="num-input" data-raw=""></div>
-    <div class="row"><label>選才導航：</label><input type="text" id="nav" class="num-input" data-raw=""></div>
+    <div class="row"><label for="pen">3C類-智能筆：</label><input type="text" id="pen" class="num-input" data-raw="" inputmode="numeric"></div>
+    <div class="row"><label for="hdd">3C類-2T硬碟：</label><input type="text" id="hdd" class="num-input" data-raw="" inputmode="numeric"></div>
+    <div class="row"><label for="other3c">其他3C類：</label><input type="text" id="other3c" class="num-input" data-raw="" inputmode="numeric"></div>
+    <div class="row"><label for="hipass">HIPASS：</label><input type="text" id="hipass" class="num-input" data-raw="" inputmode="numeric"></div>
+    <div class="row"><label for="points">好師到點數：</label><input type="text" id="points" class="num-input" data-raw="" inputmode="numeric"></div>
+    <div class="row"><label for="nav">選才導航：</label><input type="text" id="nav" class="num-input" data-raw="" inputmode="numeric"></div>
+
+    <!-- Notice when X < y_main -->
+    <div id="yMainShortfallNotice" class="notice-box hidden" role="alert" aria-live="assertive"></div>
   </div>
 
   <!-- Z -->
   <div class="section" id="section-Z">
     <h3>萬事通系列產品標準價格 (Z = 主產品 + 延長授權 + 其他費用(如書籍費) + 手續費)：<span id="Z_value" class="value positive"></span></h3>
-    <div class="row"><label>主產品（來自 Y）：</label><div id="z_main_display" class="readonly"></div></div>
-    <div class="row"><label>延長授權（來自 Y）：</label><div id="z_extend_display" class="readonly"></div></div>
-    <div class="row"><label>其他費用（來自 Y）：</label><div id="z_otherfee_display" class="readonly"></div></div>
-    <div class="row"><label>手續費（來自 Y）：</label><div id="z_servicefee_display" class="readonly"></div></div>
+    <div class="row"><label>主產品（來自 Y）：</label><div id="z_main_display" class="readonly" aria-live="polite"></div></div>
+    <div class="row"><label>延長授權（來自 Y）：</label><div id="z_extend_display" class="readonly" aria-live="polite"></div></div>
+    <div class="row"><label>其他費用（來自 Y）：</label><div id="z_otherfee_display" class="readonly" aria-live="polite"></div></div>
+    <div class="row"><label>手續費（來自 Y）：</label><div id="z_servicefee_display" class="readonly" aria-live="polite"></div></div>
 
     <div id="section-Z-addons" class="hidden" style="margin-top:12px;">
       <h4>Z 區可補充加購項目（非必填） — 溢收：<span id="surplus_amount" class="value positive"></span></h4>
@@ -92,45 +97,45 @@
       <div class="z-note">&gt;&gt;(若溢收金額不足加購項目之優惠價，會直接依實際溢收金額換算對應PV值 ; 請在最後下方的B-PV小計裡扣除3C產品或各類服務項目之對應PV)</div>
 
       <div class="row">
-        <label>3C類-智能筆：</label>
-        <input type="text" id="z_pen" class="num-input" data-raw="" placeholder="智能筆">
-        <span id="z_pen_warn" class="warn-inline hidden">需寫產品優惠價</span>
-        <span id="z_pen_warn2" class="warn-inline hidden">超過可用溢收</span>
+        <label for="z_pen">3C類-智能筆：</label>
+        <input type="text" id="z_pen" class="num-input" data-raw="" placeholder="智能筆" inputmode="numeric">
+        <span id="z_pen_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span>
+        <span id="z_pen_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span>
       </div>
 
       <div class="row">
-        <label>3C類-2T硬碟：</label>
-        <input type="text" id="z_hdd" class="num-input" data-raw="" placeholder="2T 硬碟">
-        <span id="z_hdd_warn" class="warn-inline hidden">需寫產品優惠價</span>
-        <span id="z_hdd_warn2" class="warn-inline hidden">超過可用溢收</span>
+        <label for="z_hdd">3C類-2T硬碟：</label>
+        <input type="text" id="z_hdd" class="num-input" data-raw="" placeholder="2T 硬碟" inputmode="numeric">
+        <span id="z_hdd_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span>
+        <span id="z_hdd_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span>
       </div>
 
       <div class="row">
-        <label>其他3C類：</label>
-        <input type="text" id="z_other3c" class="num-input" data-raw="" placeholder="其他3C">
-        <span id="z_other3c_warn" class="warn-inline hidden">需寫產品優惠價</span>
-        <span id="z_other3c_warn2" class="warn-inline hidden">超過可用溢收</span>
+        <label for="z_other3c">其他3C類：</label>
+        <input type="text" id="z_other3c" class="num-input" data-raw="" placeholder="其他3C" inputmode="numeric">
+        <span id="z_other3c_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span>
+        <span id="z_other3c_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span>
       </div>
 
       <div class="row">
-        <label>HIPASS：</label>
-        <input type="text" id="z_hipass" class="num-input" data-raw="" placeholder="HIPASS">
-        <span id="z_hipass_warn" class="warn-inline hidden">需寫產品優惠價</span>
-        <span id="z_hipass_warn2" class="warn-inline hidden">超過可用溢收</span>
+        <label for="z_hipass">HIPASS：</label>
+        <input type="text" id="z_hipass" class="num-input" data-raw="" placeholder="HIPASS" inputmode="numeric">
+        <span id="z_hipass_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span>
+        <span id="z_hipass_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span>
       </div>
 
       <div class="row">
-        <label>好師到點數：</label>
-        <input type="text" id="z_points" class="num-input" data-raw="" placeholder="點數">
-        <span id="z_points_warn" class="warn-inline hidden">需寫產品優惠價</span>
-        <span id="z_points_warn2" class="warn-inline hidden">超過可用溢收</span>
+        <label for="z_points">好師到點數：</label>
+        <input type="text" id="z_points" class="num-input" data-raw="" placeholder="點數" inputmode="numeric">
+        <span id="z_points_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span>
+        <span id="z_points_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span>
       </div>
 
       <div class="row">
-        <label>選才導航：</label>
-        <input type="text" id="z_nav" class="num-input" data-raw="" placeholder="導航">
-        <span id="z_nav_warn" class="warn-inline hidden">需寫產品優惠價</span>
-        <span id="z_nav_warn2" class="warn-inline hidden">超過可用溢收</span>
+        <label for="z_nav">選才導航：</label>
+        <input type="text" id="z_nav" class="num-input" data-raw="" placeholder="導航" inputmode="numeric">
+        <span id="z_nav_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span>
+        <span id="z_nav_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span>
       </div>
 
       <div class="row">
@@ -150,18 +155,17 @@
   <div class="section" id="section-PVparts">
     <h3>
       PV 組成
-      <span id="pvComposeNotice" class="warn-inline hidden">&gt;&gt;左側 PV 欄位已鎖定，請在右側扣除相對應產品PV。</span>
+      <span id="pvComposeNotice" class="warn-inline hidden" role="alert" aria-live="assertive">&gt;&gt;左側 PV 欄位已鎖定，請在右側扣除相對應產品PV。</span>
     </h3>
 
     <div style="border:1px dashed #e8e8e8; padding:10px; border-radius:6px; margin-bottom:10px;">
       <div class="muted">A — PV 主產品</div>
-      <div class="row"><label>PV-主產品 (A)：</label><input type="text" id="A" class="num-input" data-raw=""></div>
+      <div class="row"><label for="A">PV-主產品 (A)：</label><input type="text" id="A" class="num-input" data-raw="" inputmode="numeric"></div>
     </div>
 
     <div class="b-section" style="border:1px dashed #e8e8e8; padding:10px; border-radius:6px;">
       <div class="b-title">B — PV 小計</div>
 
-      <!-- 調整：將 "+ 相對應產品PV" 顯示在靠近「扣除相對應產品PV」的欄位上方 -->
       <div class="row" style="margin-top:6px;">
         <div style="width:300px;"></div>
         <div style="width:160px;">
@@ -172,72 +176,70 @@
       </div>
 
       <div class="row pv-row">
-        <label class="pv-label">PV-延長授權：</label>
-        <input class="num-input" type="text" id="pv_extend" data-raw="">
+        <label class="pv-label" for="pv_extend">PV-延長授權：</label>
+        <input class="num-input" type="text" id="pv_extend" data-raw="" inputmode="numeric">
         <div style="width:80px;"></div>
-        <input class="num-input pv-gift-input" type="text" id="pv_extend_gift" data-raw="" placeholder="請輸入負數">
+        <input class="num-input pv-gift-input" type="text" id="pv_extend_gift" data-raw="" placeholder="請輸入負數" inputmode="numeric">
         <span id="pv_extend_gift_icon" class="tooltip hidden">!
           <span class="tooltiptext">請輸入負值</span>
         </span>
       </div>
 
-      <!-- 這些左側欄位（+ 相對應產品PV）已鎖住；右側（扣除相對應產品PV）仍可輸入 -->
       <div class="row pv-row">
-        <label class="pv-label">PV-3C類-智能筆：</label>
-        <input class="num-input" type="text" id="pv_pen" data-raw="" disabled>
+        <label class="pv-label" for="pv_pen">PV-3C類-智能筆：</label>
+        <input class="num-input" type="text" id="pv_pen" data-raw="" disabled inputmode="numeric">
         <div style="width:80px;"></div>
-        <input class="num-input pv-gift-input" type="text" id="pv_pen_gift" data-raw="" placeholder="請輸入負數">
+        <input class="num-input pv-gift-input" type="text" id="pv_pen_gift" data-raw="" placeholder="請輸入負數" inputmode="numeric">
         <span id="pv_pen_gift_icon" class="tooltip hidden">!
           <span class="tooltiptext">請輸入負值</span>
         </span>
       </div>
 
       <div class="row pv-row">
-        <label class="pv-label">PV-3C類-2T硬碟：</label>
-        <input class="num-input" type="text" id="pv_hdd" data-raw="" disabled>
+        <label class="pv-label" for="pv_hdd">PV-3C類-2T硬碟：</label>
+        <input class="num-input" type="text" id="pv_hdd" data-raw="" disabled inputmode="numeric">
         <div style="width:80px;"></div>
-        <input class="num-input pv-gift-input" type="text" id="pv_hdd_gift" data-raw="" placeholder="請輸入負數">
+        <input class="num-input pv-gift-input" type="text" id="pv_hdd_gift" data-raw="" placeholder="請輸入負數" inputmode="numeric">
         <span id="pv_hdd_gift_icon" class="tooltip hidden">!
           <span class="tooltiptext">請輸入負值</span>
         </span>
       </div>
 
       <div class="row pv-row">
-        <label class="pv-label">PV-HIPASS：</label>
-        <input class="num-input" type="text" id="pv_hipass" data-raw="" disabled>
+        <label class="pv-label" for="pv_hipass">PV-HIPASS：</label>
+        <input class="num-input" type="text" id="pv_hipass" data-raw="" disabled inputmode="numeric">
         <div style="width:80px;"></div>
-        <input class="num-input pv-gift-input" type="text" id="pv_hipass_gift" data-raw="" placeholder="請輸入負數">
+        <input class="num-input pv-gift-input" type="text" id="pv_hipass_gift" data-raw="" placeholder="請輸入負數" inputmode="numeric">
         <span id="pv_hipass_gift_icon" class="tooltip hidden">!
           <span class="tooltiptext">請輸入負值</span>
         </span>
       </div>
 
       <div class="row pv-row">
-        <label class="pv-label">PV-其他3C類：</label>
-        <input class="num-input" type="text" id="pv_other3c" data-raw="" disabled>
+        <label class="pv-label" for="pv_other3c">PV-其他3C類：</label>
+        <input class="num-input" type="text" id="pv_other3c" data-raw="" disabled inputmode="numeric">
         <div style="width:80px;"></div>
-        <input class="num-input pv-gift-input" type="text" id="pv_other3c_gift" data-raw="" placeholder="請輸入負數">
+        <input class="num-input pv-gift-input" type="text" id="pv_other3c_gift" data-raw="" placeholder="請輸入負數" inputmode="numeric">
         <span id="pv_other3c_gift_icon" class="tooltip hidden">!
           <span class="tooltiptext">請輸入負值</span>
         </span>
       </div>
 
       <div class="row pv-row">
-        <label class="pv-label">PV-好師到點數：</label>
-        <input class="num-input" type="text" id="pv_points" data-raw="" disabled>
+        <label class="pv-label" for="pv_points">PV-好師到點數：</label>
+        <input class="num-input" type="text" id="pv_points" data-raw="" disabled inputmode="numeric">
         <div style="width:80px;"></div>
-        <input class="num-input pv-gift-input" type="text" id="pv_points_gift" data-raw="" placeholder="請輸入負數">
+        <input class="num-input pv-gift-input" type="text" id="pv_points_gift" data-raw="" placeholder="請輸入負數" inputmode="numeric">
         <span id="pv_points_gift_icon" class="tooltip hidden">!
           <span class="tooltiptext">請輸入負值</span>
         </span>
       </div>
-      <!-- 鎖住左側欄位結束 -->
 
       <div class="row pv-row">
-        <label class="pv-label">PV-選才導航：</label>
-        <input class="num-input" type="text" id="pv_nav" data-raw="">
+        <label class="pv-label" for="pv_nav">PV-選才導航：</label>
+        <input class="num-input" type="text" id="pv_nav" data-raw="" inputmode="numeric">
         <div style="width:80px;"></div>
-        <input class="num-input pv-gift-input" type="text" id="pv_nav_gift" data-raw="" placeholder="請輸入負數">
+        <input class="num-input pv-gift-input" type="text" id="pv_nav_gift" data-raw="" placeholder="請輸入負數" inputmode="numeric">
         <span id="pv_nav_gift_icon" class="tooltip hidden">!
           <span class="tooltiptext">請輸入負值</span>
         </span>
@@ -268,7 +270,7 @@
     function parseInputToNumber(str){
       if (str === null || str === undefined) return NaN;
       const cleaned = String(str).replace(/,/g,'').trim();
-      if (cleaned === "" || cleaned === "-" ) return NaN;
+      if (cleaned === "" ) return NaN;
       const num = Number(cleaned);
       return Number.isFinite(num) ? num : NaN;
     }
@@ -280,7 +282,7 @@
 
     function applyFormattingToInput(el){
       if(!el) return;
-      const raw = el.dataset.raw;
+      const raw = el.dataset.raw ?? "";
       const num = parseInputToNumber(raw);
       el.classList.remove('invalid','gift-has-value','negative','has-value');
       if (!Number.isFinite(num)) {
@@ -294,8 +296,8 @@
 
     function onFocusRemoveFormat(e){
       const el = e.target;
-      const raw = el.dataset.raw;
-      if (raw === undefined || raw === "") { el.value = ""; el.classList.remove('has-value'); return; }
+      const raw = el.dataset.raw ?? "";
+      if (raw === "") { el.value = ""; el.classList.remove('has-value'); el.classList.remove('negative'); return; }
       el.value = String(raw);
       const num = parseInputToNumber(raw);
       if (Number.isFinite(num) && num < 0) el.classList.add('negative'); else el.classList.remove('negative');
@@ -310,6 +312,9 @@
       } else {
         el.dataset.raw = "";
       }
+      if (el.classList.contains('pv-gift-input')) {
+        autoNegateGiftField(el);
+      }
       applyFormattingToInput(el);
       calculatePV();
     }
@@ -320,17 +325,11 @@
       const num = parseInputToNumber(v);
       if (Number.isFinite(num)) {
         el.dataset.raw = String(num);
-        if (num < 0) el.classList.add('negative'); else el.classList.remove('negative');
+        el.classList.toggle('negative', num < 0);
         el.classList.add('has-value');
       } else {
-        if (v.trim() === "-") {
-          el.dataset.raw = "-";
-          el.classList.add('negative');
-        } else {
-          el.dataset.raw = "";
-          el.classList.remove('negative');
-          el.classList.remove('has-value');
-        }
+        el.dataset.raw = "";
+        el.classList.remove('negative','has-value');
       }
     }
 
@@ -339,43 +338,90 @@
         el.addEventListener('focus', onFocusRemoveFormat);
         el.addEventListener('blur', onBlurFormat);
         el.addEventListener('input', onInputLive);
-        if (!el.dataset.raw) el.dataset.raw = "";
+        el.addEventListener('keydown', onKeyDownNavigate);
+        if (!('raw' in el.dataset)) el.dataset.raw = "";
       });
     }
 
-    function getNumFromEl(id){
+    function onKeyDownNavigate(e){
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      const el = e.target;
+      if (el.classList.contains('pv-gift-input')) {
+        autoNegateGiftField(el);
+        applyFormattingToInput(el);
+        validatePVGift(el.id);
+        calculatePV();
+      }
+      if (e.shiftKey) {
+        focusAdjacentInput(el, -1);
+      } else {
+        focusAdjacentInput(el, 1);
+      }
+    }
+
+    function focusAdjacentInput(currentEl, direction){
+      try{
+        const all = Array.from(document.querySelectorAll('.num-input'))
+          .filter(i => !i.disabled && i.offsetParent !== null);
+        if (all.length === 0) return;
+        const idx = all.indexOf(currentEl);
+        let nextIdx = idx + direction;
+        if (nextIdx < 0) nextIdx = 0;
+        if (nextIdx >= all.length) nextIdx = all.length - 1;
+        const next = all[nextIdx];
+        if (next) {
+          next.focus();
+          next.select && next.select();
+        }
+      }catch(e){
+        console.error(e);
+      }
+    }
+
+    function getNumFromEl(id, defaultToNaN = false){
       const el = document.getElementById(id);
-      if (!el) return 0;
-      const raw = el.dataset.raw;
+      if (!el) return defaultToNaN ? NaN : 0;
+      const raw = el.dataset.raw ?? "";
       const n = parseInputToNumber(raw);
-      return Number.isFinite(n) ? n : 0;
+      return Number.isFinite(n) ? n : (defaultToNaN ? NaN : 0);
     }
 
     function setText(id, n){
       const el = document.getElementById(id);
       if (!el) return;
-      if (!Number.isFinite(n)) { el.innerText = ""; el.className = "value positive"; return; }
+      if (!Number.isFinite(n)) {
+        el.innerText = "";
+        el.classList.remove('negative','positive');
+        el.classList.add('positive');
+        return;
+      }
       el.innerText = formatNumberForDisplay(n);
-      el.className = (n < 0) ? "value negative" : "value positive";
+      el.classList.remove('positive','negative');
+      el.classList.add(n < 0 ? 'negative' : 'positive');
     }
 
-    function roundDownHundred(val){
+    function roundDownHundred(val, mode = "floor"){
       if (!Number.isFinite(val)) return 0;
-      if (val >= 0) return Math.floor(val / 100) * 100;
-      return Math.ceil(val / 100) * 100;
+      if (mode === "towardZero") return val >= 0 ? Math.floor(val / 100) * 100 : Math.ceil(val / 100) * 100;
+      return Math.floor(val / 100) * 100;
     }
 
     function computeZBase(){
-      const y_main = getNumFromEl("y_main");
-      const y_extend = getNumFromEl("y_extend");
-      const y_otherfee = getNumFromEl("y_otherfee");
-      const y_servicefee = getNumFromEl("y_servicefee");
+      const y_main = getNumFromEl("y_main", true) || 0;
+      const y_extend = getNumFromEl("y_extend", true) || 0;
+      const y_otherfee = getNumFromEl("y_otherfee", true) || 0;
+      const y_servicefee = getNumFromEl("y_servicefee", true) || 0;
       return { y_main, y_extend, y_otherfee, y_servicefee, Z: y_main + y_extend + y_otherfee + y_servicefee };
     }
 
     function readZAddonsRaw(){
       const ids=["z_pen","z_hdd","z_other3c","z_hipass","z_points","z_nav"];
-      let sum=0; ids.forEach(id=>{ sum += getNumFromEl(id); });
+      let sum=0;
+      ids.forEach(id=>{
+        const v = getNumFromEl(id);
+        sum += v;
+      });
       return { sum };
     }
 
@@ -410,9 +456,9 @@
       const warnEl2 = document.getElementById(zId + "_warn2");
       const warnEl = document.getElementById(zId + "_warn");
 
-      const zRaw = zEl?.dataset.raw;
+      const zRaw = zEl?.dataset.raw ?? "";
       const zVal = parseInputToNumber(zRaw);
-      const yVal = getNumFromEl(yId);
+      const yVal = getNumFromEl(yId, true);
 
       if (!Number.isFinite(zVal)) return;
 
@@ -453,7 +499,7 @@
           return;
         }
 
-        const Xraw = document.getElementById("X").dataset.raw;
+        const Xraw = document.getElementById("X").dataset.raw ?? "";
         const X = parseInputToNumber(Xraw);
         const zBase = computeZBase();
         const Zbase = zBase.Z;
@@ -462,10 +508,10 @@
         const zIds=["z_pen","z_hdd","z_other3c","z_hipass","z_points","z_nav"];
 
         const changedEl = document.getElementById(changedId);
-        const attemptedRaw = changedEl ? changedEl.dataset.raw : "";
+        const attemptedRaw = changedEl ? changedEl.dataset.raw ?? "" : "";
         const attemptedVal = parseInputToNumber(attemptedRaw);
 
-        const current = zIds.map(id=>({id, val: parseInputToNumber(document.getElementById(id)?.dataset.raw) || 0}));
+        const current = zIds.map(id=>({id, val: parseInputToNumber(document.getElementById(id)?.dataset.raw || "") || 0}));
         const total = current.reduce((s,c)=>s+c.val,0);
 
         if (!changedEl || attemptedRaw === "" || !Number.isFinite(attemptedVal)) {
@@ -475,7 +521,7 @@
         }
 
         const yId = zToYMap[changedId];
-        const yVal = getNumFromEl(yId);
+        const yVal = getNumFromEl(yId, true);
         if (!Number.isFinite(yVal) || yVal === 0) {
           if (changedEl){
             changedEl.dataset.raw = "";
@@ -530,7 +576,7 @@
       const el = document.getElementById(id);
       if(!el) return;
       const icon = document.getElementById(id + "_icon");
-      const raw = el.dataset.raw;
+      const raw = el.dataset.raw ?? "";
       const v = parseInputToNumber(raw);
       el.classList.remove('invalid');
       el.classList.remove('gift-has-value');
@@ -549,6 +595,109 @@
       } else {
         if(icon) icon.classList.add('hidden'), icon.classList.remove('show');
         el.classList.remove('invalid');
+      }
+    }
+
+    function readPV(id){
+      const raw = getNumFromEl(id);
+      const giftEl = document.getElementById(id + "_gift");
+      const giftRaw = giftEl ? parseInputToNumber(giftEl.dataset.raw ?? "") : NaN;
+      const giftValue = Number.isFinite(giftRaw) && giftRaw < 0 ? giftRaw : 0;
+      const value = raw + giftValue;
+      return { raw, giftRaw: Number.isFinite(giftRaw) ? giftRaw : null, giftValue, value };
+    }
+
+    function autoNegateGiftField(el){
+      if (!el) return;
+      const raw = el.dataset.raw ?? "";
+      const num = parseInputToNumber(raw);
+      if (!Number.isFinite(num)) return;
+      if (num >= 0) {
+        const neg = -Math.abs(num);
+        el.dataset.raw = String(neg);
+      }
+    }
+
+    function lockFieldsWhenXLessThanYMain(shouldLock, X, yMainVal){
+      // lock list per user request:
+      // lock: y_extend, pen, hdd, other3c, hipass, points, nav
+      const idsToLock = [
+        "y_extend",
+        "pen","hdd","other3c","hipass","points","nav"
+      ];
+      const zIds = ["z_pen","z_hdd","z_other3c","z_hipass","z_points","z_nav"];
+      const pvLeftIds = ["pv_pen","pv_hdd","pv_hipass","pv_other3c","pv_points"];
+      idsToLock.forEach(id=>{
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (shouldLock) {
+          el.disabled = true;
+          el.dataset.raw = "";
+          applyFormattingToInput(el);
+        } else {
+          el.disabled = false;
+        }
+      });
+      zIds.forEach(id=>{
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (shouldLock) {
+          el.disabled = true;
+          el.dataset.raw = "";
+          applyFormattingToInput(el);
+        } else {
+          el.disabled = false;
+        }
+      });
+      pvLeftIds.forEach(id=>{
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (shouldLock) {
+          el.disabled = true;
+          el.dataset.raw = "";
+          applyFormattingToInput(el);
+        } else {
+          el.disabled = false;
+        }
+      });
+      const zAddonsSection = document.getElementById("section-Z-addons");
+      if (zAddonsSection) {
+        zAddonsSection.classList.toggle("hidden", shouldLock);
+      }
+
+      // 顯示或隱藏提醒訊息（包含少收金額與手續費/其他費用狀態）
+      const noticeEl = document.getElementById("yMainShortfallNotice");
+      if (!noticeEl) return;
+
+      if (shouldLock && Number.isFinite(X) && Number.isFinite(yMainVal)) {
+        // 計算主產品少收金額
+        const mainShort = Math.max(0, yMainVal - X);
+
+        // 將剩餘少收額度依序分配到手續費與其他費用（若有填寫）
+        let remainingShort = mainShort;
+        const serviceFeeVal = getNumFromEl("y_servicefee", true) || 0;
+        const otherFeeVal = getNumFromEl("y_otherfee", true) || 0;
+
+        const serviceShort = Math.min(serviceFeeVal, remainingShort);
+        remainingShort = Math.max(0, remainingShort - serviceShort);
+
+        const otherFeeShort = Math.min(otherFeeVal, remainingShort);
+        remainingShort = Math.max(0, remainingShort - otherFeeShort);
+
+        // 建立訊息
+        let msg = `因實際銷售價小於主產品標準價，主產品已少收 (${formatNumberForDisplay(mainShort)})`;
+        const parts = [];
+        if (serviceShort > 0) parts.push(`手續費少收 (${formatNumberForDisplay(serviceShort)})`);
+        if (otherFeeShort > 0) parts.push(`其他費用(如書籍費)少收 (${formatNumberForDisplay(otherFeeShort)})`);
+        if (parts.length > 0) {
+          msg += "，" + parts.join("，");
+        }
+        msg += "，所以無法新增其他加購項目";
+        noticeEl.innerText = msg;
+        noticeEl.classList.remove("hidden");
+      } else {
+        noticeEl.innerText = "";
+        noticeEl.classList.add("hidden");
       }
     }
 
@@ -572,14 +721,19 @@
         const Y = zBase.y_main + zBase.y_extend + zBase.y_otherfee + zBase.y_servicefee + pen + hdd + other3c + hipass + points + nav;
         setText("Y_value", Y);
 
-        const Xraw = document.getElementById("X").dataset.raw;
+        const Xraw = document.getElementById("X").dataset.raw ?? "";
         const X = parseInputToNumber(Xraw);
         setText("X_value", Number.isFinite(X) ? X : NaN);
+
+        // If X < y_main, lock the specified fields and show notice
+        const yMainVal = zBase.y_main;
+        const shouldLock = Number.isFinite(X) && Number.isFinite(yMainVal) && (X < yMainVal);
+        lockFieldsWhenXLessThanYMain(shouldLock, X, yMainVal);
 
         const surplusRaw = Number.isFinite(X) ? X - Z : 0;
         const surplus = Math.max(0, surplusRaw);
 
-        const condShowZAddons = Number.isFinite(X) && (X - Y < 0) && (X - Z > 0);
+        const condShowZAddons = Number.isFinite(X) && (X - Y < 0) && (X - Z > 0) && !shouldLock;
         document.getElementById("section-Z-addons").classList.toggle("hidden", !condShowZAddons);
         setText("surplus_amount", surplus);
 
@@ -592,7 +746,7 @@
           { y: "nav", z: "z_nav" }
         ];
         mapping.forEach(m=>{
-          const yVal = getNumFromEl(m.y);
+          const yVal = getNumFromEl(m.y, true);
           const zEl = document.getElementById(m.z);
           const warn = document.getElementById(m.z + "_warn");
           if (!zEl) return;
@@ -602,7 +756,9 @@
             applyFormattingToInput(zEl);
             if (warn) warn.classList.add("hidden");
           } else {
-            zEl.disabled = false;
+            if (!shouldLock) {
+              zEl.disabled = false;
+            }
             if (warn) warn.classList.add("hidden");
           }
         });
@@ -633,19 +789,6 @@
 
         const A = getNumFromEl("A");
 
-        function readPV(id){
-          const raw = getNumFromEl(id);
-          const giftRawRaw = parseInputToNumber(document.getElementById(id + "_gift")?.dataset.raw || "");
-          const giftRaw = Number.isFinite(giftRawRaw) ? giftRawRaw : 0;
-          if (giftRaw > 0){
-            return { raw, giftRaw:0, giftValue:0, value: raw };
-          } else {
-            const giftValue = giftRaw;
-            const value = raw + giftValue;
-            return { raw, giftRaw, giftValue, value };
-          }
-        }
-
         const pvIds = ["pv_extend","pv_pen","pv_hdd","pv_hipass","pv_other3c","pv_points","pv_nav"];
         const pv_objs = pvIds.map(id => ({ id, obj: readPV(id) }));
         const B = pv_objs.reduce((s,p)=> s + p.obj.value, 0);
@@ -657,13 +800,13 @@
           diffXY = X - Y;
           diffXZ = X - Z;
           if (diffXY < 0 && diffXZ > 0) {
-            roundVal = roundDownHundred(X - (Z + Z_addons));
+            roundVal = roundDownHundred(X - (Z + Z_addons), "floor");
           } else if (diffXY === 0) {
-            roundVal = roundDownHundred(X - Y);
+            roundVal = roundDownHundred(X - Y, "floor");
           } else if (diffXY < 0 && diffXZ < 0) {
-            roundVal = roundDownHundred(X - Z);
+            roundVal = roundDownHundred(X - Z, "floor");
           } else {
-            roundVal = roundDownHundred(X - Z);
+            roundVal = roundDownHundred(X - Z, "floor");
           }
         }
 
@@ -673,10 +816,12 @@
         const pvEl = document.getElementById("PV_value");
         if (Number.isFinite(PV)) {
           pvEl.innerText = formatNumberForDisplay(PV);
-          pvEl.className = (PV < 0) ? "value negative" : "value positive";
+          pvEl.classList.remove('positive','negative');
+          pvEl.classList.add(PV < 0 ? 'negative' : 'positive');
         } else {
           pvEl.innerText = "";
         }
+
         const roundPartSign = roundVal >= 0 ? "+" : "-";
         const roundPartAbs = Math.abs(roundVal);
         const simpleLine = Number.isFinite(PV) ? `PV = ${formatNumberForDisplay(A)} ${roundPartSign}${formatNumberForDisplay(roundPartAbs)} ${B>=0? "+"+formatNumberForDisplay(B): formatNumberForDisplay(B)} = ${formatNumberForDisplay(PV)}` : `PV = -`;
@@ -694,7 +839,7 @@
         });
 
         document.querySelectorAll('.num-input').forEach(el=>{
-          const raw = el.dataset.raw;
+          const raw = el.dataset.raw ?? "";
           const n = parseInputToNumber(raw);
           if (Number.isFinite(n) && n !== 0) el.classList.add('has-value'); else el.classList.remove('has-value');
           if (Number.isFinite(n) && n < 0) el.classList.add('negative'); else el.classList.remove('negative');
@@ -711,14 +856,25 @@
       ["z_pen","z_hdd","z_other3c","z_hipass","z_points","z_nav"].forEach(id=>{
         const el = document.getElementById(id);
         if(!el) return;
+        el.addEventListener('input', (e)=> onZAddonInput(id, e));
         el.addEventListener('blur', (e)=> onZAddonInput(id, e));
       });
 
       ["pv_extend_gift","pv_pen_gift","pv_hdd_gift","pv_hipass_gift","pv_other3c_gift","pv_points_gift","pv_nav_gift"].forEach(id=>{
         const el = document.getElementById(id);
         if(!el) return;
+        el.addEventListener('blur', ()=> { autoNegateGiftField(el); applyFormattingToInput(el); validatePVGift(id); calculatePV(); });
         el.addEventListener('input', ()=> validatePVGift(id));
-        el.addEventListener('blur', ()=> validatePVGift(id));
+        el.addEventListener('keydown', (e)=> {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            autoNegateGiftField(el);
+            applyFormattingToInput(el);
+            validatePVGift(id);
+            calculatePV();
+            focusAdjacentInput(el, 1);
+          }
+        });
       });
 
       const ids = ["X","y_main","y_extend","y_otherfee","y_servicefee","pen","hdd","other3c","hipass","points","nav","A",
