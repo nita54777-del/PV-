@@ -38,7 +38,7 @@
     .pv-label { width:300px; }
     .col-header { width:220px; text-align:right; font-weight:700; margin-left:8px; }
     pre { background:#f7f7f7; padding:10px; border-radius:6px; overflow:auto; white-space:pre-wrap; }
-    .simple-line { font-weight:700; font-size:16px; padding:10px; background:#fff; border-radius:6px; border:1px solid #e8e8e8; display:inline-block; }
+    .simple-line { font-weight:700; font-size:16px; padding:10px; background:#fff; border-radius:6px; border:1px solid #e8e8e8; display:inline-block; white-space:pre-wrap; }
     .z-note { font-size:14px; color:var(--danger); font-weight:700; margin-top:8px; display:block; }
     .b-section input.num-input { width:160px; padding:10px 12px; font-size:16px; border:2px solid #9fb8d6; border-radius:10px; background:#fff; }
     #PV_value { font-size:20px; padding-left:6px; padding-right:6px; }
@@ -92,7 +92,7 @@
     <div class="row"><label>手續費（來自 Y）：</label><div id="z_servicefee_display" class="readonly" aria-live="polite"></div></div>
 
     <div id="section-Z-addons" class="hidden" style="margin-top:12px;">
-      <h4>Z 區可補充加購項目（非必填） — 溢收：<span id="surplus_amount" class="value positive"></span></h4>
+      <h4>Z 區可補充加購項目（非必填） — 溢收（X - Z）：<span id="surplus_amount" class="value positive"></span></h4>
 
       <div class="z-note">&gt;&gt;(若溢收金額不足加購項目之優惠價，會直接依實際溢收金額換算對應PV值 ; 請在最後下方的B-PV小計裡扣除3C產品或各類服務項目之對應PV)</div>
 
@@ -280,6 +280,13 @@
       return nf.format(Math.round(n));
     }
 
+    function sanitizeNumericString(s) {
+      if (s === null || s === undefined) return "";
+      const cleaned = String(s).replace(/[^\d\-,.]/g, '').trim();
+      if (cleaned === "" || cleaned === "," || cleaned === "-" || cleaned === "." ) return "";
+      return cleaned;
+    }
+
     function applyFormattingToInput(el){
       if(!el) return;
       const raw = el.dataset.raw ?? "";
@@ -306,7 +313,8 @@
     function onBlurFormat(e){
       const el = e.target;
       const v = el.value;
-      const num = parseInputToNumber(v);
+      const sanitized = sanitizeNumericString(v);
+      const num = parseInputToNumber(sanitized);
       if (Number.isFinite(num)) {
         el.dataset.raw = String(num);
       } else {
@@ -322,7 +330,8 @@
     function onInputLive(e){
       const el = e.target;
       const v = el.value;
-      const num = parseInputToNumber(v);
+      const sanitized = sanitizeNumericString(v);
+      const num = parseInputToNumber(sanitized);
       if (Number.isFinite(num)) {
         el.dataset.raw = String(num);
         el.classList.toggle('negative', num < 0);
@@ -379,12 +388,12 @@
       }
     }
 
-    function getNumFromEl(id, defaultToNaN = false){
+    function getNumFromEl(id){
       const el = document.getElementById(id);
-      if (!el) return defaultToNaN ? NaN : 0;
+      if (!el) return null;
       const raw = el.dataset.raw ?? "";
       const n = parseInputToNumber(raw);
-      return Number.isFinite(n) ? n : (defaultToNaN ? NaN : 0);
+      return Number.isFinite(n) ? n : null;
     }
 
     function setText(id, n){
@@ -408,10 +417,10 @@
     }
 
     function computeZBase(){
-      const y_main = getNumFromEl("y_main", true) || 0;
-      const y_extend = getNumFromEl("y_extend", true) || 0;
-      const y_otherfee = getNumFromEl("y_otherfee", true) || 0;
-      const y_servicefee = getNumFromEl("y_servicefee", true) || 0;
+      const y_main = getNumFromEl("y_main") ?? 0;
+      const y_extend = getNumFromEl("y_extend") ?? 0;
+      const y_otherfee = getNumFromEl("y_otherfee") ?? 0;
+      const y_servicefee = getNumFromEl("y_servicefee") ?? 0;
       return { y_main, y_extend, y_otherfee, y_servicefee, Z: y_main + y_extend + y_otherfee + y_servicefee };
     }
 
@@ -419,7 +428,7 @@
       const ids=["z_pen","z_hdd","z_other3c","z_hipass","z_points","z_nav"];
       let sum=0;
       ids.forEach(id=>{
-        const v = getNumFromEl(id);
+        const v = getNumFromEl(id) ?? 0;
         sum += v;
       });
       return { sum };
@@ -458,7 +467,7 @@
 
       const zRaw = zEl?.dataset.raw ?? "";
       const zVal = parseInputToNumber(zRaw);
-      const yVal = getNumFromEl(yId, true);
+      const yVal = getNumFromEl(yId);
 
       if (!Number.isFinite(zVal)) return;
 
@@ -484,7 +493,7 @@
           }
           return;
         } else {
-          if (warnEl) warnEl.classList.add('hidden');
+          if (warnEl) warnEl.classList.add("hidden");
           if (zEl) zEl.classList.remove('invalid');
         }
       }
@@ -506,7 +515,6 @@
         const surplus = Math.max(0, Number.isFinite(X) ? X - Zbase : 0);
 
         const zIds=["z_pen","z_hdd","z_other3c","z_hipass","z_points","z_nav"];
-
         const changedEl = document.getElementById(changedId);
         const attemptedRaw = changedEl ? changedEl.dataset.raw ?? "" : "";
         const attemptedVal = parseInputToNumber(attemptedRaw);
@@ -521,7 +529,7 @@
         }
 
         const yId = zToYMap[changedId];
-        const yVal = getNumFromEl(yId, true);
+        const yVal = getNumFromEl(yId);
         if (!Number.isFinite(yVal) || yVal === 0) {
           if (changedEl){
             changedEl.dataset.raw = "";
@@ -599,7 +607,7 @@
     }
 
     function readPV(id){
-      const raw = getNumFromEl(id);
+      const raw = getNumFromEl(id) ?? 0;
       const giftEl = document.getElementById(id + "_gift");
       const giftRaw = giftEl ? parseInputToNumber(giftEl.dataset.raw ?? "") : NaN;
       const giftValue = Number.isFinite(giftRaw) && giftRaw < 0 ? giftRaw : 0;
@@ -619,8 +627,6 @@
     }
 
     function lockFieldsWhenXLessThanYMain(shouldLock, X, yMainVal){
-      // lock list per user request:
-      // lock: y_extend, pen, hdd, other3c, hipass, points, nav
       const idsToLock = [
         "y_extend",
         "pen","hdd","other3c","hipass","points","nav"
@@ -665,18 +671,14 @@
         zAddonsSection.classList.toggle("hidden", shouldLock);
       }
 
-      // 顯示或隱藏提醒訊息（包含少收金額與手續費/其他費用狀態）
       const noticeEl = document.getElementById("yMainShortfallNotice");
       if (!noticeEl) return;
 
       if (shouldLock && Number.isFinite(X) && Number.isFinite(yMainVal)) {
-        // 計算主產品少收金額
         const mainShort = Math.max(0, yMainVal - X);
-
-        // 將剩餘少收額度依序分配到手續費與其他費用（若有填寫）
         let remainingShort = mainShort;
-        const serviceFeeVal = getNumFromEl("y_servicefee", true) || 0;
-        const otherFeeVal = getNumFromEl("y_otherfee", true) || 0;
+        const serviceFeeVal = getNumFromEl("y_servicefee") ?? 0;
+        const otherFeeVal = getNumFromEl("y_otherfee") ?? 0;
 
         const serviceShort = Math.min(serviceFeeVal, remainingShort);
         remainingShort = Math.max(0, remainingShort - serviceShort);
@@ -684,7 +686,6 @@
         const otherFeeShort = Math.min(otherFeeVal, remainingShort);
         remainingShort = Math.max(0, remainingShort - otherFeeShort);
 
-        // 建立訊息
         let msg = `因實際銷售價小於主產品標準價，主產品已少收 (${formatNumberForDisplay(mainShort)})`;
         const parts = [];
         if (serviceShort > 0) parts.push(`手續費少收 (${formatNumberForDisplay(serviceShort)})`);
@@ -711,12 +712,12 @@
         setText("z_otherfee_display", zBase.y_otherfee);
         setText("z_servicefee_display", zBase.y_servicefee);
 
-        const pen = getNumFromEl("pen");
-        const hdd = getNumFromEl("hdd");
-        const other3c = getNumFromEl("other3c");
-        const hipass = getNumFromEl("hipass");
-        const points = getNumFromEl("points");
-        const nav = getNumFromEl("nav");
+        const pen = getNumFromEl("pen") ?? 0;
+        const hdd = getNumFromEl("hdd") ?? 0;
+        const other3c = getNumFromEl("other3c") ?? 0;
+        const hipass = getNumFromEl("hipass") ?? 0;
+        const points = getNumFromEl("points") ?? 0;
+        const nav = getNumFromEl("nav") ?? 0;
 
         const Y = zBase.y_main + zBase.y_extend + zBase.y_otherfee + zBase.y_servicefee + pen + hdd + other3c + hipass + points + nav;
         setText("Y_value", Y);
@@ -725,16 +726,18 @@
         const X = parseInputToNumber(Xraw);
         setText("X_value", Number.isFinite(X) ? X : NaN);
 
-        // If X < y_main, lock the specified fields and show notice
         const yMainVal = zBase.y_main;
         const shouldLock = Number.isFinite(X) && Number.isFinite(yMainVal) && (X < yMainVal);
         lockFieldsWhenXLessThanYMain(shouldLock, X, yMainVal);
 
+        // 原始溢收 = X - Z
         const surplusRaw = Number.isFinite(X) ? X - Z : 0;
         const surplus = Math.max(0, surplusRaw);
 
-        const condShowZAddons = Number.isFinite(X) && (X - Y < 0) && (X - Z > 0) && !shouldLock;
+        const condShowZAddons = Number.isFinite(X) && surplus > 0 && !shouldLock;
         document.getElementById("section-Z-addons").classList.toggle("hidden", !condShowZAddons);
+
+        // 顯示原始溢收 (X - Z) 在 Z 區標題位置
         setText("surplus_amount", surplus);
 
         const mapping = [
@@ -746,7 +749,7 @@
           { y: "nav", z: "z_nav" }
         ];
         mapping.forEach(m=>{
-          const yVal = getNumFromEl(m.y, true);
+          const yVal = getNumFromEl(m.y);
           const zEl = document.getElementById(m.z);
           const warn = document.getElementById(m.z + "_warn");
           if (!zEl) return;
@@ -770,7 +773,7 @@
           const zIds=["z_pen","z_hdd","z_other3c","z_hipass","z_points","z_nav"];
           let total=0;
           zIds.forEach(id=>{
-            const v = getNumFromEl(id);
+            const v = getNumFromEl(id) ?? 0;
             total += v;
             const warn = document.getElementById(id + "_warn2");
             if (!warn) return;
@@ -784,10 +787,11 @@
         }
         setText("Z_addons_value", Z_addons);
 
+        // 可用剩餘溢收 = surplus - Z_addons
         const remainingAmount = surplus - Z_addons;
         setText("surplus_remaining", remainingAmount > 0 ? remainingAmount : 0);
 
-        const A = getNumFromEl("A");
+        const A = getNumFromEl("A") ?? 0;
 
         const pvIds = ["pv_extend","pv_pen","pv_hdd","pv_hipass","pv_other3c","pv_points","pv_nav"];
         const pv_objs = pvIds.map(id => ({ id, obj: readPV(id) }));
@@ -799,14 +803,20 @@
         if (Number.isFinite(X)){
           diffXY = X - Y;
           diffXZ = X - Z;
-          if (diffXY < 0 && diffXZ > 0) {
-            roundVal = roundDownHundred(X - (Z + Z_addons), "floor");
-          } else if (diffXY === 0) {
-            roundVal = roundDownHundred(X - Y, "floor");
-          } else if (diffXY < 0 && diffXZ < 0) {
-            roundVal = roundDownHundred(X - Z, "floor");
+
+          // === 重要變更：roundVal 與 PV 計算使用「可用剩餘溢收 (remainingAmount)」為主要來源 ===
+          // 若 remainingAmount 有效且大於等於 0，優先以 remainingAmount 四捨五入到百位（向下）作為 roundVal
+          if (Number.isFinite(remainingAmount) && remainingAmount > 0) {
+            roundVal = roundDownHundred(remainingAmount, "floor");
           } else {
-            roundVal = roundDownHundred(X - Z, "floor");
+            // fallback：保留原本分支邏輯（若 remainingAmount 無效或為 0）
+            if (diffXY < 0 && diffXZ > 0) {
+              roundVal = roundDownHundred(X - (Z + Z_addons), "floor");
+            } else if (diffXY === 0) {
+              roundVal = roundDownHundred(X - Y, "floor");
+            } else {
+              roundVal = roundDownHundred(X - Z, "floor");
+            }
           }
         }
 
@@ -822,9 +832,15 @@
           pvEl.innerText = "";
         }
 
+        // 在 PV 的簡潔計算式中，溢收計算與 roundVal 均以「可用剩餘溢收 (remainingAmount)」為來源
         const roundPartSign = roundVal >= 0 ? "+" : "-";
         const roundPartAbs = Math.abs(roundVal);
-        const simpleLine = Number.isFinite(PV) ? `PV = ${formatNumberForDisplay(A)} ${roundPartSign}${formatNumberForDisplay(roundPartAbs)} ${B>=0? "+"+formatNumberForDisplay(B): formatNumberForDisplay(B)} = ${formatNumberForDisplay(PV)}` : `PV = -`;
+        const remainingDisplay = Number.isFinite(remainingAmount) ? formatNumberForDisplay(Math.max(0, remainingAmount)) : "-";
+        const pvPart = Number.isFinite(PV)
+          ? `PV = ${formatNumberForDisplay(A)} ${roundPartSign}${formatNumberForDisplay(roundPartAbs)} ${B>=0? "+"+formatNumberForDisplay(B): formatNumberForDisplay(B)} = ${formatNumberForDisplay(PV)}`
+          : `PV = -`;
+        // 這裡只顯示「溢收（以可用剩餘計）」一次，並以 remainingAmount 帶入
+        const simpleLine = `${pvPart} ；溢收（以可用剩餘計）：${remainingDisplay}`;
         document.getElementById("simpleCalc").innerText = simpleLine;
 
         const noticeEl = document.getElementById("pvComposeNotice");
@@ -886,7 +902,6 @@
         el.addEventListener('blur', calculatePV);
       });
 
-      // 初始：確保左側 + 相對應產品PV 的欄位為 disabled（使用者不可輸入）
       ["pv_pen","pv_hdd","pv_hipass","pv_other3c","pv_points"].forEach(id=>{
         const el = document.getElementById(id);
         if (el) el.disabled = true;
