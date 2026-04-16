@@ -837,7 +837,7 @@
         const pvPart = Number.isFinite(PV)
           ? `PV = ${formatNumberForDisplay(A)} ${roundPartSign}${formatNumberForDisplay(roundPartAbs)} ${B>=0? "+"+formatNumberForDisplay(B): formatNumberForDisplay(B)} = ${formatNumberForDisplay(PV)}`
           : `PV = -`;
-        const simpleLine = `${pvPart} ；溢收（以可用剩餘計）：${remainingDisplay}`;
+        const simpleLine = `${pvPart} ；溢收：${remainingDisplay}`;
         document.getElementById("simpleCalc").innerText = simpleLine;
 
         const noticeEl = document.getElementById("pvComposeNotice");
