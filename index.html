@@ -94,7 +94,7 @@
     <div id="section-Z-addons" class="hidden" style="margin-top:12px;">
       <h4>Z 區可補充加購項目（非必填） — 溢收（X - Z）：<span id="surplus_amount" class="value positive"></span></h4>
 
-      <div class="z-note">&gt;&gt;(若溢收金額不足加購項目之優惠價，會直接依實際溢收金額換算對應PV值 ; 請在最後下方的B-PV小計裡扣除3C產品或各類服務項目之對應PV)</div>
+      <div class="z-note">&gt;&gt;(若溢收金額不足加購項目優惠價，則依實際溢收金額換算 PV；請在 B-PV 小計下方扣除 3C 產品或各類服務項目之對應 PV。)</div>
 
       <div class="row">
         <label for="z_pen">3C類-智能筆：</label>
@@ -155,7 +155,7 @@
   <div class="section" id="section-PVparts">
     <h3>
       PV 組成
-      <span id="pvComposeNotice" class="warn-inline hidden" role="alert" aria-live="assertive">&gt;&gt;左側 PV 欄位已鎖定，請在右側扣除相對應產品PV。</span>
+      <span id="pvComposeNotice" class="warn-inline hidden" role="alert" aria-live="assertive">&gt;&gt;左側 PV 欄位已鎖定(延長授權、選才導航除外)，請在右側扣除相對應產品PV。</span>
     </h3>
 
     <div style="border:1px dashed #e8e8e8; padding:10px; border-radius:6px; margin-bottom:10px;">
@@ -626,6 +626,7 @@
       }
     }
 
+    // 修改後：當 X < y_main 時，顯示主產品少收缺口，並把其他費用與手續費各自顯示為「少收其標準金額」（若有填）
     function lockFieldsWhenXLessThanYMain(shouldLock, X, yMainVal){
       const idsToLock = [
         "y_extend",
@@ -675,25 +676,24 @@
       if (!noticeEl) return;
 
       if (shouldLock && Number.isFinite(X) && Number.isFinite(yMainVal)) {
+        // 主產品少收缺口
         const mainShort = Math.max(0, yMainVal - X);
-        let remainingShort = mainShort;
+
+        // 直接把其他費用與手續費視為「各自少收其標準金額」（若有填）
         const serviceFeeVal = getNumFromEl("y_servicefee") ?? 0;
         const otherFeeVal = getNumFromEl("y_otherfee") ?? 0;
 
-        const serviceShort = Math.min(serviceFeeVal, remainingShort);
-        remainingShort = Math.max(0, remainingShort - serviceShort);
+        // 組訊息：顯示主產品缺口，並分別顯示其他費用與手續費的標準與實際少收（此處實際少收即為其標準）
+        let parts = [];
+        if (otherFeeVal > 0) parts.push(`其他費用(如書籍費)少收 (${formatNumberForDisplay(otherFeeVal)})`);
+        if (serviceFeeVal > 0) parts.push(`手續費少收 (${formatNumberForDisplay(serviceFeeVal)})`);
 
-        const otherFeeShort = Math.min(otherFeeVal, remainingShort);
-        remainingShort = Math.max(0, remainingShort - otherFeeShort);
-
-        let msg = `因實際銷售價小於主產品標準價，主產品已少收 (${formatNumberForDisplay(mainShort)})`;
-        const parts = [];
-        if (serviceShort > 0) parts.push(`手續費少收 (${formatNumberForDisplay(serviceShort)})`);
-        if (otherFeeShort > 0) parts.push(`其他費用(如書籍費)少收 (${formatNumberForDisplay(otherFeeShort)})`);
+        let msg = `因實際銷售價小於主產品標準價，主產品已少收 (${formatNumberForDisplay(mainShort)})。`;
         if (parts.length > 0) {
-          msg += "，" + parts.join("，");
+          msg += " " + parts.join("；") + "。";
         }
-        msg += "，所以無法新增其他加購項目";
+        msg += " 因此無法新增其他加購項目。";
+
         noticeEl.innerText = msg;
         noticeEl.classList.remove("hidden");
       } else {
@@ -804,12 +804,10 @@
           diffXY = X - Y;
           diffXZ = X - Z;
 
-          // === 重要變更：roundVal 與 PV 計算使用「可用剩餘溢收 (remainingAmount)」為主要來源 ===
-          // 若 remainingAmount 有效且大於等於 0，優先以 remainingAmount 四捨五入到百位（向下）作為 roundVal
+          // roundVal 優先以 remainingAmount 為來源（若有）
           if (Number.isFinite(remainingAmount) && remainingAmount > 0) {
             roundVal = roundDownHundred(remainingAmount, "floor");
           } else {
-            // fallback：保留原本分支邏輯（若 remainingAmount 無效或為 0）
             if (diffXY < 0 && diffXZ > 0) {
               roundVal = roundDownHundred(X - (Z + Z_addons), "floor");
             } else if (diffXY === 0) {
@@ -839,7 +837,6 @@
         const pvPart = Number.isFinite(PV)
           ? `PV = ${formatNumberForDisplay(A)} ${roundPartSign}${formatNumberForDisplay(roundPartAbs)} ${B>=0? "+"+formatNumberForDisplay(B): formatNumberForDisplay(B)} = ${formatNumberForDisplay(PV)}`
           : `PV = -`;
-        // 這裡只顯示「溢收（以可用剩餘計）」一次，並以 remainingAmount 帶入
         const simpleLine = `${pvPart} ；溢收（以可用剩餘計）：${remainingDisplay}`;
         document.getElementById("simpleCalc").innerText = simpleLine;
 
