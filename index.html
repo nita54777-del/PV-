@@ -4,149 +4,540 @@
   <meta charset="utf-8" />
   <title>PV 計算器</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --accent:#0b4f8a;
-      --danger:#c62828;
-      --input-bg:#fff;
-      --input-border:#cfcfcf;
-      --has-value-border:#2b7bd6;
-      --has-value-bg:#f0f7ff;
+    :root {
+      --c1: #e3f6fb;
+      --c2: #c7eefb;
+      --c3: #ace6fb;
+      --c4: #9bc3fb;
+      --accent: #1a6fa8;
+      --accent-deep: #0e4d7a;
+      --danger: #d63e3e;
+      --danger-light: #fff0f0;
+      --danger-border: #f5c0c0;
+      --text: #1c2e3e;
+      --text-muted: #5a7a8e;
+      --input-bg: #fff;
+      --input-border: #b8d9ef;
+      --has-value-border: #3899d4;
+      --has-value-bg: #f0faff;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 2px 12px rgba(26,111,168,0.10);
+      --shadow-md: 0 4px 24px rgba(26,111,168,0.14);
     }
-    body { font-family: "Noto Sans TC", Arial, sans-serif; margin:20px; color:#222; }
-    .section { border:1px solid #e8e8e8; padding:14px; margin-bottom:14px; border-radius:8px; background:#fafafa; }
-    .row { display:flex; align-items:center; gap:12px; margin:8px 0; flex-wrap:wrap; }
-    label { width:360px; color:#333; }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: "Noto Sans TC", "Microsoft JhengHei", Arial, sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #eaf8fd 0%, #daf0fb 50%, #d0e9fc 100%);
+      min-height: 100vh;
+      color: var(--text);
+      padding: 28px 16px 100px;
+    }
+
+    /* ── Header ── */
+    .page-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .page-header h1 {
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--accent-deep);
+      margin: 0 0 6px;
+      letter-spacing: 1px;
+    }
+    .page-header .subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+    .header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+    .header-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--c3), var(--c4));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 12px rgba(155,195,251,0.5);
+    }
+
+    /* ── Card / Section ── */
+    .section {
+      background: #fff;
+      border: 1px solid var(--c2);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--c3), var(--c4));
+    }
+
+    /* ── Section headers ── */
+    h3 {
+      margin: 0 0 14px;
+      color: var(--accent-deep);
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    h3 .section-badge {
+      background: linear-gradient(135deg, var(--c3), var(--c4));
+      color: var(--accent-deep);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+    }
+    h4 {
+      margin: 14px 0 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* ── Rows ── */
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 7px 0;
+      flex-wrap: wrap;
+    }
+    label {
+      width: clamp(140px, 28vw, 340px);
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* ── Inputs ── */
     input[type="text"].num-input {
-      width:180px; padding:8px 10px; border:1px solid var(--input-border);
-      border-radius:8px; text-align:right; background:var(--input-bg); font-size:14px;
-      transition: box-shadow .12s, border-color .12s, background-color .12s;
+      width: clamp(120px, 16vw, 180px);
+      padding: 9px 12px;
+      border: 1.5px solid var(--input-border);
+      border-radius: var(--radius-sm);
+      text-align: right;
+      background: var(--input-bg);
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      transition: box-shadow .15s, border-color .15s, background-color .15s;
+      outline: none;
     }
-    input.num-input:focus { outline:2px solid rgba(11,79,138,0.12); border-color:var(--accent); }
-    input.num-input.has-value { border:2px solid var(--has-value-border); background:var(--has-value-bg); box-shadow:0 2px 6px rgba(43,123,214,0.12); }
-    input.num-input.negative { border-color:var(--danger); color:var(--danger); box-shadow:0 2px 6px rgba(198,40,40,0.06); }
-    input.num-input.invalid { border-color:var(--danger); box-shadow:0 2px 6px rgba(198,40,40,0.06); }
-    input.pv-gift-input.gift-has-value { border:2px solid var(--danger) !important; box-shadow:0 2px 6px rgba(198,40,40,0.06); }
-    h1 { margin:0 0 12px 0; color:var(--accent); font-size:22px; }
-    h3 { margin:6px 0; color:var(--accent); display:flex; align-items:center; gap:12px; }
-    .value { font-weight:700; min-width:140px; display:inline-block; text-align:right; }
-    .positive { color:var(--accent); }
-    .negative { color:var(--danger); }
-    .readonly { padding:6px 10px; background:#fff; border:1px solid #e8e8e8; border-radius:6px; min-width:160px; text-align:right; }
-    .muted { color:#666; font-size:13px; margin-left:8px; }
-    .hidden { display:none; }
-    .pv-label { width:300px; }
-    .col-header { width:220px; text-align:right; font-weight:700; margin-left:8px; }
-    pre { background:#f7f7f7; padding:10px; border-radius:6px; overflow:auto; white-space:pre-wrap; }
-    .simple-line { font-weight:700; font-size:16px; padding:10px; background:#fff; border-radius:6px; border:1px solid #e8e8e8; display:inline-block; white-space:pre-wrap; }
-    .z-note { font-size:14px; color:var(--danger); font-weight:700; margin-top:8px; display:block; }
-    .b-section input.num-input { width:160px; padding:10px 12px; font-size:16px; border:2px solid #9fb8d6; border-radius:10px; background:#fff; }
-    #PV_value { font-size:20px; padding-left:6px; padding-right:6px; }
-    .b-title { font-weight:700; font-size:15px; margin-bottom:6px; }
-    .warn-inline { color:var(--danger); font-weight:700; margin-left:8px; }
-    .small { font-size:13px; color:#666; }
-    .tooltip { margin-left:8px; color:var(--danger); font-weight:700; }
-    .notice-box { padding:10px; border-radius:6px; background:#fff3f3; border:1px solid #f2c2c2; color:var(--danger); font-weight:700; margin-top:8px; }
-    @media (max-width:900px){ label { width:200px; } .col-header { display:none; } }
+    /* Z 區右側提示框（預設隱藏） */
+    input.z-right-remind {
+      display: none;
+    }
+    input.z-right-remind.show-remind {
+      display: inline-block;
+      border: 2px solid #d97b3a !important;
+      background: #fff8f3 !important;
+      box-shadow: 0 0 0 3px rgba(217,123,58,0.15) !important;
+      color: transparent;
+      cursor: pointer;
+      animation: pulse-orange 1.6s ease-in-out infinite;
+    }
+    input.z-right-remind.show-remind::placeholder {
+      color: #c0622a;
+      font-weight: 600;
+      font-size: clamp(9px, 1.1vw, 11px);
+    }
+    input.pv-z-remind {
+      border: 2px solid #d97b3a !important;
+      background: #fff8f3 !important;
+      box-shadow: 0 0 0 3px rgba(217,123,58,0.15) !important;
+      animation: pulse-orange 1.6s ease-in-out infinite;
+    }
+    input.pv-z-remind::placeholder {
+      color: #c0622a !important;
+      font-weight: 600;
+      font-size: clamp(9px, 1.1vw, 11px);
+    }
+    input.num-input.pv-remind {
+      border: 2px solid #d97b3a !important;
+      background: #fff8f3 !important;
+      box-shadow: 0 0 0 3px rgba(217,123,58,0.15) !important;
+      animation: pulse-orange 1.6s ease-in-out infinite;
+    }
+    @keyframes pulse-orange {
+      0%, 100% { box-shadow: 0 0 0 3px rgba(217,123,58,0.15); }
+      50%       { box-shadow: 0 0 0 6px rgba(217,123,58,0.08); }
+    }
+    input.num-input.placeholder-warn::placeholder {
+      color: #c0622a;
+      font-weight: 600;
+      font-size: clamp(9px, 1.1vw, 11px);
+    }
+    input.num-input.placeholder-warn {
+      border-color: #e8a87c;
+      background: #fff8f3;
+    }
+    input.num-input::placeholder {
+      font-size: clamp(9px, 1.1vw, 11px);
+      color: #a0b8cc;
+      text-align: left;
+    }
+    input.num-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(26,111,168,0.12);
+    }
+    input.num-input.has-value {
+      border: 2px solid var(--has-value-border);
+      background: var(--has-value-bg);
+    }
+    input.num-input.negative {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+    input.num-input.invalid {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px rgba(214,62,62,0.10);
+    }
+    input.num-input:disabled {
+      background: var(--c1);
+      border-color: #d0e8f4;
+      color: #a0b8c8;
+      cursor: not-allowed;
+    }
+    input.pv-gift-input.gift-has-value {
+      border: 2px solid var(--danger) !important;
+      background: var(--danger-light);
+    }
+
+    /* ── Value display ── */
+    .value {
+      font-weight: 700;
+      font-size: 15px;
+      min-width: 130px;
+      display: inline-block;
+      text-align: right;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .positive { color: var(--accent-deep); }
+    .negative { color: var(--danger); }
+
+    .readonly {
+      padding: 8px 12px;
+      background: var(--c1);
+      border: 1.5px solid var(--c2);
+      border-radius: var(--radius-sm);
+      min-width: 160px;
+      text-align: right;
+      font-size: 14px;
+      color: var(--accent-deep);
+      font-weight: 500;
+    }
+
+    .muted {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* ── Dividers inside section ── */
+    .sub-block {
+      border: 1.5px dashed var(--c3);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      background: linear-gradient(to bottom right, #fafdff, #f0f9fe);
+    }
+    .sub-block-title {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--accent);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sub-block-title::before {
+      content: '';
+      width: 4px; height: 14px;
+      background: linear-gradient(to bottom, var(--c3), var(--c4));
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    /* ── PV result ── */
+    #section-result {
+      background: linear-gradient(135deg, #e8f9fd 0%, #d8f0fc 100%);
+      border: 2px solid var(--c3);
+    }
+    #section-result::before {
+      height: 4px;
+      background: linear-gradient(90deg, var(--c4), #5ab8f5, var(--c4));
+    }
+    #PV_value {
+      font-size: 26px !important;
+      padding: 4px 14px !important;
+      background: linear-gradient(135deg, var(--c2), var(--c3));
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(26,111,168,0.15);
+    }
+
+    .simple-line {
+      font-weight: 700;
+      font-size: 15px;
+      padding: 14px 18px;
+      background: #fff;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--c3);
+      display: block;
+      white-space: normal;
+      line-height: 2;
+      color: var(--accent-deep);
+      box-shadow: inset 0 1px 4px rgba(155,195,251,0.15);
+    }
+    pre {
+      background: var(--c1);
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      overflow: auto;
+      white-space: pre-wrap;
+      font-size: 13px;
+      color: var(--text-muted);
+      border: 1px solid var(--c2);
+    }
+    .small { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+
+    /* ── Warnings / notices ── */
+    .z-note {
+      font-size: 13px;
+      color: var(--danger);
+      font-weight: 600;
+      margin: 10px 0 6px;
+      background: var(--danger-light);
+      border: 1px solid var(--danger-border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      display: block;
+    }
+    .notice-box {
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--danger-light);
+      border: 1.5px solid var(--danger-border);
+      color: var(--danger);
+      font-weight: 600;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    .warn-inline {
+      color: var(--danger);
+      font-weight: 700;
+      margin-left: 6px;
+      font-size: 13px;
+      background: var(--danger-light);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .tooltip {
+      margin-left: 6px;
+      color: var(--danger);
+      font-weight: 700;
+      background: var(--danger-light);
+      border: 1px solid var(--danger-border);
+      border-radius: 50%;
+      width: 20px; height: 20px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      cursor: help;
+    }
+
+    /* ── col-header for PV table ── */
+    .col-header {
+      width: 220px;
+      text-align: right;
+      font-weight: 700;
+      margin-left: 8px;
+      color: var(--accent);
+      font-size: 13px;
+    }
+    .pv-label { width: 280px; font-size: 14px; }
+
+    .hidden { display: none !important; }
+
+    /* ── Subtotal chip ── */
+    .subtotal-row {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1.5px solid var(--c2);
+    }
+
+    /* ── B section header bar ── */
+    .b-col-labels {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 6px;
+      padding: 0 0 8px;
+      border-bottom: 1px solid var(--c2);
+    }
+    .b-col-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      text-align: right;
+    }
+
+    /* Separator in Y section */
+    .y-separator {
+      border: none;
+      border-top: 1px dashed var(--c3);
+      margin: 12px 0;
+    }
+    .field-hint {
+      font-size: 11px;
+      color: #8aabbd;
+      margin: 0 0 4px 0;
+      padding-left: 2px;
+      line-height: 1.5;
+    }
+    .block-hint {
+      font-size: 12px;
+      color: #8aabbd;
+      margin: -6px 0 10px 2px;
+      line-height: 1.5;
+    }
+    @media (max-width: 900px) {
+      label { width: 180px; font-size: 13px; }
+      .pv-label { width: 180px; }
+      .col-header { display: none; }
+      input[type="text"].num-input { width: 150px; }
+    }
   </style>
 </head>
 <body>
-  <h1>PV 計算器</h1>
+
+  <div class="page-header">
+    <div class="header-bar">
+      <div class="header-icon">🧮</div>
+      <h1>PV 計算器</h1>
+    </div>
+    <div class="subtitle">輸入數值後即時計算 · 千分位自動顯示</div>
+  </div>
 
   <!-- X -->
   <div class="section" id="section-X">
-    <h3>實際銷售總額 (X)：<span id="X_value" class="value positive"></span></h3>
+    <h3>
+      <span class="section-badge">X</span>
+      實際銷售總額
+      <span id="X_value" class="value positive"></span>
+    </h3>
     <div class="row">
       <label for="X">訂單金額（X）：</label>
       <input type="text" id="X" class="num-input" data-raw="" placeholder="輸入 X" inputmode="numeric" pattern="[0-9\-\,]*">
-      <div class="muted">輸入後即時計算（千分位顯示）</div>
     </div>
+    <div class="field-hint">客戶實際支付給公司的訂單總金額，作為後續溢收／短收計算的基準。</div>
   </div>
 
   <!-- Y -->
   <div class="section" id="section-Y">
-    <h3>產品應付總額(依標準價格) (Y)：<span id="Y_value" class="value positive"></span></h3>
-    <div class="row"><label for="y_main">主產品：</label><input type="text" id="y_main" class="num-input" data-raw="" inputmode="numeric"></div>
-    <div class="row"><label for="y_extend">延長授權：</label><input type="text" id="y_extend" class="num-input" data-raw="" inputmode="numeric"></div>
-    <div class="row"><label for="y_otherfee">其他費用(如書籍費)：</label><input type="text" id="y_otherfee" class="num-input" data-raw="" inputmode="numeric"></div>
-    <div class="row"><label for="y_servicefee">手續費：</label><input type="text" id="y_servicefee" class="num-input" data-raw="" inputmode="numeric"></div>
+    <h3>
+      <span class="section-badge">Y</span>
+      產品應付總額（依標準價格）
+      <span id="Y_value" class="value positive"></span>
+    </h3>
+    <div class="sub-block">
+      <div class="sub-block-title">必填項目</div>
+      <div class="block-hint">依照產品標準定價填入，用來計算 Z（萬事通系列應收總額）。</div>
+      <div class="row"><label for="y_main">主產品：</label><input type="text" id="y_main" class="num-input" data-raw="" inputmode="numeric"></div>
+      <div class="field-hint">主要課程產品的標準售價。若 X 小於此金額，代表主產品已短收，其他加購欄位將自動鎖定。</div>
+      <div class="row"><label for="y_extend">延長授權：</label><input type="text" id="y_extend" class="num-input" data-raw="" inputmode="numeric"></div>
+      <div class="field-hint">若訂單有附加延長授權，請填入其標準定價。</div>
+      <div class="row"><label for="y_otherfee">其他費用（如書籍費）：</label><input type="text" id="y_otherfee" class="num-input" data-raw="" inputmode="numeric"></div>
+      <div class="field-hint">書籍費或其他附加費用的標準金額。</div>
+      <div class="row"><label for="y_servicefee">手續費：</label><input type="text" id="y_servicefee" class="num-input" data-raw="" inputmode="numeric"></div>
+      <div class="field-hint">訂單產生的手續費標準金額。</div>
+    </div>
 
-    <h4 class="muted">Y 區可補充項目（非必填）</h4>
-    <div class="row"><label for="pen">3C類-智能筆：</label><input type="text" id="pen" class="num-input" data-raw="" inputmode="numeric"></div>
-    <div class="row"><label for="hdd">3C類-2T硬碟：</label><input type="text" id="hdd" class="num-input" data-raw="" inputmode="numeric"></div>
-    <div class="row"><label for="other3c">其他3C類：</label><input type="text" id="other3c" class="num-input" data-raw="" inputmode="numeric"></div>
-    <div class="row"><label for="hipass">HIPASS：</label><input type="text" id="hipass" class="num-input" data-raw="" inputmode="numeric"></div>
-    <div class="row"><label for="points">好師到點數：</label><input type="text" id="points" class="num-input" data-raw="" inputmode="numeric"></div>
-    <div class="row"><label for="nav">選才導航：</label><input type="text" id="nav" class="num-input" data-raw="" inputmode="numeric"></div>
+    <div class="sub-block collapsible-block" id="optional-block">
+      <div class="sub-block-title collapsible-title" onclick="toggleOptional()">
+        補充項目
+        <span class="collapse-hint" id="optional-hint">點擊展開 ▼</span>
+      </div>
+      <div class="block-hint">若訂單包含以下加購項目，請填入標準定價。X 大於主產品時才開放填寫。</div>
+      <div id="optional-content" class="collapsible-content collapsed">
+        <div class="row"><label for="pen">3C類－智能筆：</label><input type="text" id="pen" class="num-input" data-raw="" inputmode="numeric"></div>
+        <div class="row"><label for="hdd">3C類－2T 硬碟：</label><input type="text" id="hdd" class="num-input" data-raw="" inputmode="numeric"></div>
+        <div class="row"><label for="other3c">其他 3C 類：</label><input type="text" id="other3c" class="num-input" data-raw="" inputmode="numeric"></div>
+        <div class="row"><label for="hipass">HIPASS：</label><input type="text" id="hipass" class="num-input" data-raw="" inputmode="numeric"></div>
+        <div class="row"><label for="points">好師到點數：</label><input type="text" id="points" class="num-input" data-raw="" inputmode="numeric"></div>
+        <div class="row"><label for="nav">選才導航：</label><input type="text" id="nav" class="num-input" data-raw="" inputmode="numeric"></div>
+      </div>
+    </div>
 
-    <!-- Notice when X < y_main -->
     <div id="yMainShortfallNotice" class="notice-box hidden" role="alert" aria-live="assertive"></div>
   </div>
 
   <!-- Z -->
   <div class="section" id="section-Z">
-    <h3>萬事通系列產品標準價格 (Z = 主產品 + 延長授權 + 其他費用(如書籍費) + 手續費)：<span id="Z_value" class="value positive"></span></h3>
-    <div class="row"><label>主產品（來自 Y）：</label><div id="z_main_display" class="readonly" aria-live="polite"></div></div>
-    <div class="row"><label>延長授權（來自 Y）：</label><div id="z_extend_display" class="readonly" aria-live="polite"></div></div>
-    <div class="row"><label>其他費用（來自 Y）：</label><div id="z_otherfee_display" class="readonly" aria-live="polite"></div></div>
-    <div class="row"><label>手續費（來自 Y）：</label><div id="z_servicefee_display" class="readonly" aria-live="polite"></div></div>
+    <h3>
+      <span class="section-badge">Z</span>
+      萬事通系列標準價格（主產品＋延長授權＋其他費用＋手續費）
+      <span id="Z_value" class="value positive"></span>
+    </h3>
 
-    <div id="section-Z-addons" class="hidden" style="margin-top:12px;">
-      <h4>Z 區可補充加購項目（非必填） — 溢收（X - Z）：<span id="surplus_amount" class="value positive"></span></h4>
+    <div class="sub-block">
+      <div class="sub-block-title">Z 組成（來自 Y）</div>
+      <div class="block-hint">自動帶入 Y 區必填項目，無需手動輸入。Z 為萬事通系列產品的標準應收總額。</div>
+      <div class="row"><label>主產品：</label><div id="z_main_display" class="readonly" aria-live="polite"></div></div>
+      <div class="row"><label>延長授權：</label><div id="z_extend_display" class="readonly" aria-live="polite"></div></div>
+      <div class="row"><label>其他費用：</label><div id="z_otherfee_display" class="readonly" aria-live="polite"></div></div>
+      <div class="row"><label>手續費：</label><div id="z_servicefee_display" class="readonly" aria-live="polite"></div></div>
+    </div>
 
-      <div class="z-note">&gt;&gt;(若溢收金額不足加購項目優惠價，則依實際溢收金額換算 PV；請在 B-PV 小計下方扣除 3C 產品或各類服務項目之對應 PV。)</div>
+    <div id="section-Z-addons" class="hidden">
+      <div class="sub-block">
+        <div class="sub-block-title">
+          Z 區加購項目（非必填）
+          <span style="font-weight:400; margin-left:6px; color:var(--text-muted);">溢收（X − Z）：</span>
+          <span id="surplus_amount" class="value positive" style="font-size:14px;"></span>
+        </div>
 
-      <div class="row">
-        <label for="z_pen">3C類-智能筆：</label>
-        <input type="text" id="z_pen" class="num-input" data-raw="" placeholder="智能筆" inputmode="numeric">
-        <span id="z_pen_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span>
-        <span id="z_pen_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span>
-      </div>
+        <div class="block-hint">X 超過 Z 才會出現此區。填入客戶實際加購的項目金額（需與 Y 區填的優惠價一致）；若溢收不足，依實際金額換算 PV。</div>
+        <div class="z-note">▶ 若溢收金額不足加購項目優惠價，則依實際溢收金額換算 PV；請在 B-PV 小計下方扣除 3C 產品或各類服務項目之對應 PV。</div>
 
-      <div class="row">
-        <label for="z_hdd">3C類-2T硬碟：</label>
-        <input type="text" id="z_hdd" class="num-input" data-raw="" placeholder="2T 硬碟" inputmode="numeric">
-        <span id="z_hdd_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span>
-        <span id="z_hdd_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span>
-      </div>
+        <div class="row"><label for="z_pen">3C類－智能筆：</label><input type="text" id="z_pen" class="num-input" data-raw="" placeholder="智能筆" inputmode="numeric"><span id="z_pen_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span><span id="z_pen_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span></div>
+        <div class="row"><label for="z_hdd">3C類－2T 硬碟：</label><input type="text" id="z_hdd" class="num-input" data-raw="" placeholder="2T 硬碟" inputmode="numeric"><span id="z_hdd_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span><span id="z_hdd_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span></div>
+        <div class="row"><label for="z_other3c">其他 3C 類：</label><input type="text" id="z_other3c" class="num-input" data-raw="" placeholder="其他3C" inputmode="numeric"><span id="z_other3c_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span><span id="z_other3c_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span></div>
+        <div class="row"><label for="z_hipass">HIPASS：</label><input type="text" id="z_hipass" class="num-input" data-raw="" placeholder="HIPASS" inputmode="numeric"><span id="z_hipass_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span><span id="z_hipass_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span></div>
+        <div class="row"><label for="z_points">好師到點數：</label><input type="text" id="z_points" class="num-input" data-raw="" placeholder="點數" inputmode="numeric"><span id="z_points_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span><span id="z_points_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span></div>
+        <div class="row"><label for="z_nav">選才導航：</label><input type="text" id="z_nav" class="num-input" data-raw="" placeholder="導航" inputmode="numeric"><span id="z_nav_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span><span id="z_nav_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span></div>
 
-      <div class="row">
-        <label for="z_other3c">其他3C類：</label>
-        <input type="text" id="z_other3c" class="num-input" data-raw="" placeholder="其他3C" inputmode="numeric">
-        <span id="z_other3c_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span>
-        <span id="z_other3c_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span>
-      </div>
-
-      <div class="row">
-        <label for="z_hipass">HIPASS：</label>
-        <input type="text" id="z_hipass" class="num-input" data-raw="" placeholder="HIPASS" inputmode="numeric">
-        <span id="z_hipass_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span>
-        <span id="z_hipass_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span>
-      </div>
-
-      <div class="row">
-        <label for="z_points">好師到點數：</label>
-        <input type="text" id="z_points" class="num-input" data-raw="" placeholder="點數" inputmode="numeric">
-        <span id="z_points_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span>
-        <span id="z_points_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span>
-      </div>
-
-      <div class="row">
-        <label for="z_nav">選才導航：</label>
-        <input type="text" id="z_nav" class="num-input" data-raw="" placeholder="導航" inputmode="numeric">
-        <span id="z_nav_warn" class="warn-inline hidden" role="alert" aria-live="assertive">需寫產品優惠價</span>
-        <span id="z_nav_warn2" class="warn-inline hidden" role="alert" aria-live="assertive">超過可用溢收</span>
-      </div>
-
-      <div class="row">
-        <label><strong>Z 區小計：</strong></label>
-        <span id="Z_addons_value" class="value positive"></span>
-        <div class="muted">（不可超過溢收）</div>
-      </div>
-
-      <div class="row">
-        <label><strong>&gt;&gt;實際溢收金額換算對應PV值：</strong></label>
-        <span id="surplus_remaining" class="value positive"></span>
+        <div class="row subtotal-row">
+          <label><strong>Z 區小計：</strong></label>
+          <span id="Z_addons_value" class="value positive"></span>
+          <div class="muted">（不可超過溢收）</div>
+        </div>
+        <div class="row">
+          <label><strong>▶ 實際溢收換算對應 PV 值：</strong></label>
+          <span id="surplus_remaining" class="value positive"></span>
+        </div>
       </div>
     </div>
   </div>
@@ -154,112 +545,52 @@
   <!-- PV 組成 A / B -->
   <div class="section" id="section-PVparts">
     <h3>
+      <span class="section-badge">PV</span>
       PV 組成
-      <span id="pvComposeNotice" class="warn-inline hidden" role="alert" aria-live="assertive">&gt;&gt;左側 PV 欄位已鎖定(延長授權、選才導航除外)，請在右側扣除相對應產品PV。</span>
+      <span id="pvComposeNotice" class="warn-inline hidden" role="alert" aria-live="assertive">▶ 左側 PV 欄位已鎖定（延長授權、選才導航除外），請在右側扣除相對應產品 PV。</span>
     </h3>
 
-    <div style="border:1px dashed #e8e8e8; padding:10px; border-radius:6px; margin-bottom:10px;">
-      <div class="muted">A — PV 主產品</div>
-      <div class="row"><label for="A">PV-主產品 (A)：</label><input type="text" id="A" class="num-input" data-raw="" inputmode="numeric"></div>
+    <!-- A -->
+    <div class="sub-block">
+      <div class="sub-block-title">A — PV 主產品</div>
+      <div class="block-hint">填入主產品對應的 PV 點數，通常可從產品資料表查詢。</div>
+      <div class="row"><label for="A">PV－主產品（A）：</label><input type="text" id="A" class="num-input" data-raw="" inputmode="numeric"></div>
     </div>
 
-    <div class="b-section" style="border:1px dashed #e8e8e8; padding:10px; border-radius:6px;">
-      <div class="b-title">B — PV 小計</div>
+    <!-- B -->
+    <div class="sub-block">
+      <div class="sub-block-title">B — PV 小計</div>
+      <div class="block-hint">左側填客戶購買產品的 PV；右側填贈送產品需扣除的 PV（請輸入負數）。灰色鎖定表示需先在 Z 區填入對應金額。</div>
 
-      <div class="row" style="margin-top:6px;">
-        <div style="width:300px;"></div>
-        <div style="width:160px;">
-          <strong style="display:block; margin-bottom:6px; text-align:right;">+ 相對應產品PV</strong>
-        </div>
-        <div style="width:80px;"></div>
-        <div class="col-header">扣除相對應產品PV</div>
+      <div class="row pv-row"><label class="pv-label" for="pv_extend">PV－延長授權：</label><input class="num-input" type="text" id="pv_extend" data-raw="" placeholder="若為客戶購買請輸入產品 PV" inputmode="numeric"><div style="width:80px;"></div><input class="num-input pv-gift-input" type="text" id="pv_extend_gift" data-raw="" placeholder="若為贈送請輸入扣除產品 PV" inputmode="numeric"><span id="pv_extend_gift_icon" class="tooltip hidden">!</span></div>
+      <div class="row pv-row"><label class="pv-label" for="pv_pen">PV－3C類－智能筆：</label><input class="num-input" type="text" id="pv_pen" data-raw="" disabled placeholder="若為客戶購買請輸入產品 PV" inputmode="numeric"><div style="width:80px;"></div><input class="num-input pv-gift-input" type="text" id="pv_pen_gift" data-raw="" placeholder="若為贈送請輸入扣除產品 PV" inputmode="numeric"><span id="pv_pen_gift_icon" class="tooltip hidden">!</span></div>
+      <div class="row pv-row"><label class="pv-label" for="pv_hdd">PV－3C類－2T 硬碟：</label><input class="num-input" type="text" id="pv_hdd" data-raw="" disabled placeholder="若為客戶購買請輸入產品 PV" inputmode="numeric"><div style="width:80px;"></div><input class="num-input pv-gift-input" type="text" id="pv_hdd_gift" data-raw="" placeholder="若為贈送請輸入扣除產品 PV" inputmode="numeric"><span id="pv_hdd_gift_icon" class="tooltip hidden">!</span></div>
+      <div class="row pv-row"><label class="pv-label" for="pv_hipass">PV－HIPASS：</label><input class="num-input" type="text" id="pv_hipass" data-raw="" disabled placeholder="若為客戶購買請輸入產品 PV" inputmode="numeric"><div style="width:80px;"></div><input class="num-input pv-gift-input" type="text" id="pv_hipass_gift" data-raw="" placeholder="若為贈送請輸入扣除產品 PV" inputmode="numeric"><span id="pv_hipass_gift_icon" class="tooltip hidden">!</span></div>
+      <div class="row pv-row"><label class="pv-label" for="pv_other3c">PV－其他 3C 類：</label><input class="num-input" type="text" id="pv_other3c" data-raw="" disabled placeholder="若為客戶購買請輸入產品 PV" inputmode="numeric"><div style="width:80px;"></div><input class="num-input pv-gift-input" type="text" id="pv_other3c_gift" data-raw="" placeholder="若為贈送請輸入扣除產品 PV" inputmode="numeric"><span id="pv_other3c_gift_icon" class="tooltip hidden">!</span></div>
+      <div class="row pv-row"><label class="pv-label" for="pv_points">PV－好師到點數：</label><input class="num-input" type="text" id="pv_points" data-raw="" disabled placeholder="若為客戶購買請輸入產品 PV" inputmode="numeric"><div style="width:80px;"></div><input class="num-input pv-gift-input" type="text" id="pv_points_gift" data-raw="" placeholder="若為贈送請輸入扣除產品 PV" inputmode="numeric"><span id="pv_points_gift_icon" class="tooltip hidden">!</span></div>
+      <div class="row pv-row"><label class="pv-label" for="pv_nav">PV－選才導航：</label><input class="num-input" type="text" id="pv_nav" data-raw="" placeholder="若為客戶購買請輸入產品 PV" inputmode="numeric"><div style="width:80px;"></div><input class="num-input pv-gift-input" type="text" id="pv_nav_gift" data-raw="" placeholder="若為贈送請輸入扣除產品 PV" inputmode="numeric"><span id="pv_nav_gift_icon" class="tooltip hidden">!</span></div>
+
+      <div class="row subtotal-row">
+        <label><strong>B 小計：</strong></label>
+        <span id="B_value" class="value positive"></span>
       </div>
-
-      <div class="row pv-row">
-        <label class="pv-label" for="pv_extend">PV-延長授權：</label>
-        <input class="num-input" type="text" id="pv_extend" data-raw="" inputmode="numeric">
-        <div style="width:80px;"></div>
-        <input class="num-input pv-gift-input" type="text" id="pv_extend_gift" data-raw="" placeholder="請輸入負數" inputmode="numeric">
-        <span id="pv_extend_gift_icon" class="tooltip hidden">!
-          <span class="tooltiptext">請輸入負值</span>
-        </span>
-      </div>
-
-      <div class="row pv-row">
-        <label class="pv-label" for="pv_pen">PV-3C類-智能筆：</label>
-        <input class="num-input" type="text" id="pv_pen" data-raw="" disabled inputmode="numeric">
-        <div style="width:80px;"></div>
-        <input class="num-input pv-gift-input" type="text" id="pv_pen_gift" data-raw="" placeholder="請輸入負數" inputmode="numeric">
-        <span id="pv_pen_gift_icon" class="tooltip hidden">!
-          <span class="tooltiptext">請輸入負值</span>
-        </span>
-      </div>
-
-      <div class="row pv-row">
-        <label class="pv-label" for="pv_hdd">PV-3C類-2T硬碟：</label>
-        <input class="num-input" type="text" id="pv_hdd" data-raw="" disabled inputmode="numeric">
-        <div style="width:80px;"></div>
-        <input class="num-input pv-gift-input" type="text" id="pv_hdd_gift" data-raw="" placeholder="請輸入負數" inputmode="numeric">
-        <span id="pv_hdd_gift_icon" class="tooltip hidden">!
-          <span class="tooltiptext">請輸入負值</span>
-        </span>
-      </div>
-
-      <div class="row pv-row">
-        <label class="pv-label" for="pv_hipass">PV-HIPASS：</label>
-        <input class="num-input" type="text" id="pv_hipass" data-raw="" disabled inputmode="numeric">
-        <div style="width:80px;"></div>
-        <input class="num-input pv-gift-input" type="text" id="pv_hipass_gift" data-raw="" placeholder="請輸入負數" inputmode="numeric">
-        <span id="pv_hipass_gift_icon" class="tooltip hidden">!
-          <span class="tooltiptext">請輸入負值</span>
-        </span>
-      </div>
-
-      <div class="row pv-row">
-        <label class="pv-label" for="pv_other3c">PV-其他3C類：</label>
-        <input class="num-input" type="text" id="pv_other3c" data-raw="" disabled inputmode="numeric">
-        <div style="width:80px;"></div>
-        <input class="num-input pv-gift-input" type="text" id="pv_other3c_gift" data-raw="" placeholder="請輸入負數" inputmode="numeric">
-        <span id="pv_other3c_gift_icon" class="tooltip hidden">!
-          <span class="tooltiptext">請輸入負值</span>
-        </span>
-      </div>
-
-      <div class="row pv-row">
-        <label class="pv-label" for="pv_points">PV-好師到點數：</label>
-        <input class="num-input" type="text" id="pv_points" data-raw="" disabled inputmode="numeric">
-        <div style="width:80px;"></div>
-        <input class="num-input pv-gift-input" type="text" id="pv_points_gift" data-raw="" placeholder="請輸入負數" inputmode="numeric">
-        <span id="pv_points_gift_icon" class="tooltip hidden">!
-          <span class="tooltiptext">請輸入負值</span>
-        </span>
-      </div>
-
-      <div class="row pv-row">
-        <label class="pv-label" for="pv_nav">PV-選才導航：</label>
-        <input class="num-input" type="text" id="pv_nav" data-raw="" inputmode="numeric">
-        <div style="width:80px;"></div>
-        <input class="num-input pv-gift-input" type="text" id="pv_nav_gift" data-raw="" placeholder="請輸入負數" inputmode="numeric">
-        <span id="pv_nav_gift_icon" class="tooltip hidden">!
-          <span class="tooltiptext">請輸入負值</span>
-        </span>
-      </div>
-
-      <div class="row"><label><strong>B 小計：</strong></label><span id="B_value" class="value positive"></span></div>
     </div>
   </div>
 
   <!-- 結果 -->
   <div class="section" id="section-result">
-    <h3>PV 結果：<span id="PV_value" class="value positive"></span></h3>
+    <h3>
+      <span class="section-badge" style="background:linear-gradient(135deg,#9bc3fb,#7aabf5); font-size:12px; padding:3px 12px;">結果</span>
+      PV 計算結果
+      <span id="PV_value" class="value positive"></span>
+    </h3>
 
-    <div style="margin-top:12px;">
+    <div style="margin-top:14px;">
       <div class="small">簡潔計算式（依照套用公式直接帶入數字）：</div>
-      <div id="simpleCalc" class="simple-line">PV = -</div>
+      <div id="simpleCalc" class="simple-line">PV = —</div>
     </div>
-
-    <div style="margin-top:12px;">
-      <div class="small">(數值供參考)</div>
+    <div style="margin-top:14px;">
+      <div class="small">數值供參考：</div>
       <pre id="calcDisplay"></pre>
     </div>
   </div>
@@ -353,18 +684,33 @@
     }
 
     function onKeyDownNavigate(e){
-      if (e.key !== 'Enter') return;
-      e.preventDefault();
       const el = e.target;
+      const navKeys = ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter'];
+      if (!navKeys.includes(e.key)) return;
+
+      // 左右鍵：在輸入框內有文字時讓游標正常移動，只有在邊界才跳欄
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        const pos = el.selectionStart;
+        const len = el.value.length;
+        const atStart = pos === 0 && el.selectionEnd === 0;
+        const atEnd   = pos === len && el.selectionEnd === len;
+        if (e.key === 'ArrowLeft'  && !atStart) return; // 還有字可移，不攔截
+        if (e.key === 'ArrowRight' && !atEnd)   return;
+      }
+
+      e.preventDefault();
+
+      // gift 欄：離開前自動處理負數
       if (el.classList.contains('pv-gift-input')) {
         autoNegateGiftField(el);
         applyFormattingToInput(el);
         validatePVGift(el.id);
         calculatePV();
       }
-      if (e.shiftKey) {
+
+      if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft'  || (e.key === 'Enter' && e.shiftKey)) {
         focusAdjacentInput(el, -1);
-      } else {
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'Enter') {
         focusAdjacentInput(el, 1);
       }
     }
@@ -378,10 +724,13 @@
         let nextIdx = idx + direction;
         if (nextIdx < 0) nextIdx = 0;
         if (nextIdx >= all.length) nextIdx = all.length - 1;
+        if (nextIdx === idx) return; // 已在邊界，不動
         const next = all[nextIdx];
         if (next) {
           next.focus();
           next.select && next.select();
+          // 捲動到視野內
+          next.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
       }catch(e){
         console.error(e);
@@ -626,7 +975,6 @@
       }
     }
 
-    // 修改後：當 X < y_main 時，顯示主產品少收缺口，並把其他費用與手續費各自顯示為「少收其標準金額」（若有填）
     function lockFieldsWhenXLessThanYMain(shouldLock, X, yMainVal){
       const idsToLock = [
         "y_extend",
@@ -676,24 +1024,15 @@
       if (!noticeEl) return;
 
       if (shouldLock && Number.isFinite(X) && Number.isFinite(yMainVal)) {
-        // 主產品少收缺口
         const mainShort = Math.max(0, yMainVal - X);
-
-        // 直接把其他費用與手續費視為「各自少收其標準金額」（若有填）
         const serviceFeeVal = getNumFromEl("y_servicefee") ?? 0;
         const otherFeeVal = getNumFromEl("y_otherfee") ?? 0;
-
-        // 組訊息：顯示主產品缺口，並分別顯示其他費用與手續費的標準與實際少收（此處實際少收即為其標準）
         let parts = [];
         if (otherFeeVal > 0) parts.push(`其他費用(如書籍費)少收 (${formatNumberForDisplay(otherFeeVal)})`);
         if (serviceFeeVal > 0) parts.push(`手續費少收 (${formatNumberForDisplay(serviceFeeVal)})`);
-
         let msg = `因實際銷售價小於主產品標準價，主產品已少收 (${formatNumberForDisplay(mainShort)})。`;
-        if (parts.length > 0) {
-          msg += " " + parts.join("；") + "。";
-        }
+        if (parts.length > 0) msg += " " + parts.join("；") + "。";
         msg += " 因此無法新增其他加購項目。";
-
         noticeEl.innerText = msg;
         noticeEl.classList.remove("hidden");
       } else {
@@ -730,14 +1069,40 @@
         const shouldLock = Number.isFinite(X) && Number.isFinite(yMainVal) && (X < yMainVal);
         lockFieldsWhenXLessThanYMain(shouldLock, X, yMainVal);
 
-        // 原始溢收 = X - Z
+        // 當 y_extend 有值且 pv_extend 為空時，橘紅色提示 pv_extend
+        const yExtendVal = getNumFromEl('y_extend');
+        const pvExtendEl = document.getElementById('pv_extend');
+        if (pvExtendEl) {
+          const pvExtendHasValue = (pvExtendEl.dataset.raw ?? '') !== '';
+          if (Number.isFinite(yExtendVal) && yExtendVal !== 0 && !pvExtendHasValue) {
+            pvExtendEl.classList.add('pv-remind');
+          } else {
+            pvExtendEl.classList.remove('pv-remind');
+          }
+        }
+
+        // 當 X > 主產品時，提示延長授權、其他費用、手續費需要填寫
+        const xGtMain = Number.isFinite(X) && Number.isFinite(yMainVal) && yMainVal > 0 && X > yMainVal;
+        const reminderPlaceholder = '若訂單有出現則需要填上金額';
+        ['y_extend', 'y_otherfee', 'y_servicefee', 'pen', 'hdd', 'other3c', 'hipass', 'points', 'nav'].forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          const hasValue = (el.dataset.raw ?? '') !== '';
+          if (xGtMain && !hasValue) {
+            el.placeholder = reminderPlaceholder;
+            el.classList.add('placeholder-warn');
+          } else {
+            el.placeholder = '';
+            el.classList.remove('placeholder-warn');
+          }
+        });
+
         const surplusRaw = Number.isFinite(X) ? X - Z : 0;
         const surplus = Math.max(0, surplusRaw);
 
         const condShowZAddons = Number.isFinite(X) && surplus > 0 && !shouldLock;
         document.getElementById("section-Z-addons").classList.toggle("hidden", !condShowZAddons);
 
-        // 顯示原始溢收 (X - Z) 在 Z 區標題位置
         setText("surplus_amount", surplus);
 
         const mapping = [
@@ -759,9 +1124,7 @@
             applyFormattingToInput(zEl);
             if (warn) warn.classList.add("hidden");
           } else {
-            if (!shouldLock) {
-              zEl.disabled = false;
-            }
+            if (!shouldLock) zEl.disabled = false;
             if (warn) warn.classList.add("hidden");
           }
         });
@@ -787,7 +1150,6 @@
         }
         setText("Z_addons_value", Z_addons);
 
-        // 可用剩餘溢收 = surplus - Z_addons
         const remainingAmount = surplus - Z_addons;
         setText("surplus_remaining", remainingAmount > 0 ? remainingAmount : 0);
 
@@ -803,8 +1165,6 @@
         if (Number.isFinite(X)){
           diffXY = X - Y;
           diffXZ = X - Z;
-
-          // roundVal 優先以 remainingAmount 為來源（若有）
           if (Number.isFinite(remainingAmount) && remainingAmount > 0) {
             roundVal = roundDownHundred(remainingAmount, "floor");
           } else {
@@ -827,24 +1187,67 @@
           pvEl.classList.remove('positive','negative');
           pvEl.classList.add(PV < 0 ? 'negative' : 'positive');
         } else {
-          pvEl.innerText = "";
+          pvEl.innerText = "—";
         }
 
-        // 在 PV 的簡潔計算式中，溢收計算與 roundVal 均以「可用剩餘溢收 (remainingAmount)」為來源
-        const roundPartSign = roundVal >= 0 ? "+" : "-";
-        const roundPartAbs = Math.abs(roundVal);
-        const remainingDisplay = Number.isFinite(remainingAmount) ? formatNumberForDisplay(Math.max(0, remainingAmount)) : "-";
-        const pvPart = Number.isFinite(PV)
-          ? `PV = ${formatNumberForDisplay(A)} ${roundPartSign}${formatNumberForDisplay(roundPartAbs)} ${B>=0? "+"+formatNumberForDisplay(B): formatNumberForDisplay(B)} = ${formatNumberForDisplay(PV)}`
-          : `PV = -`;
-        const simpleLine = `${pvPart} ；溢收：${remainingDisplay}`;
-        document.getElementById("simpleCalc").innerText = simpleLine;
-
-        const noticeEl = document.getElementById("pvComposeNotice");
-        if(Number.isFinite(diffXY) && Number.isFinite(diffXZ) && diffXY < 0 && diffXZ < 0){
-          if(noticeEl) noticeEl.classList.remove("hidden");
+        // ── 重新產生清楚的計算式（HTML 版，帶標籤顏色）──
+        const simpleEl = document.getElementById("simpleCalc");
+        if (!Number.isFinite(PV)) {
+          simpleEl.innerHTML = '<span>PV = —</span>';
         } else {
-          if(noticeEl) noticeEl.classList.add("hidden");
+          // 判斷溢收 or 短收
+          const isShort = roundVal < 0;
+          const surplusLabel = isShort ? '短收' : '溢收';
+          const surplusColor = isShort ? '#d63e3e' : '#1a6fa8';
+
+          // 拆解 B 的各項目（只顯示有值的）
+          const pvLabels = [
+            { id: 'pv_extend',  name: '延長授權' },
+            { id: 'pv_pen',     name: '智能筆'   },
+            { id: 'pv_hdd',     name: '2T硬碟'   },
+            { id: 'pv_hipass',  name: 'HIPASS'   },
+            { id: 'pv_other3c', name: '其他3C'   },
+            { id: 'pv_points',  name: '好師到點數'},
+            { id: 'pv_nav',     name: '選才導航' },
+          ];
+
+          // 每個 part = { value: number, label: string, color: string }
+          // join 時統一由分隔符處理正負號，數字本身只顯示絕對值
+          let parts = [];
+
+          const makePart = (value, label, color) => ({ value, label, color });
+
+          if (A !== 0)        parts.push(makePart(A,        '主產品PV',   '#1a6fa8'));
+          if (roundVal !== 0) parts.push(makePart(roundVal,  surplusLabel, surplusColor));
+
+          pvLabels.forEach(({ id, name }) => {
+            const obj = readPV(id);
+            if (obj.raw !== 0)      parts.push(makePart(obj.raw,       name + 'PV',   '#1a6fa8'));
+            if (obj.giftValue !== 0) parts.push(makePart(obj.giftValue, name + '扣除', '#d63e3e'));
+          });
+
+          const eqColor = PV < 0 ? '#d63e3e' : '#0e4d7a';
+
+          // 組合：第一項不加符號，後續正數加 +，負數加 -（絕對值顯示）
+          const partsHtml = parts.map((p, i) => {
+            const abs = formatNumberForDisplay(Math.abs(p.value));
+            const sep = i === 0
+              ? ''
+              : p.value >= 0
+                ? ' <span style="color:#999">+</span> '
+                : ' <span style="color:#d63e3e">−</span> ';
+            return `${sep}<span style="color:${p.color};font-weight:700">${abs}</span><span style="color:#5a7a8e;font-size:12px">（${p.label}）</span>`;
+          }).join('');
+
+          simpleEl.innerHTML =
+            `<span style="color:#5a7a8e">PV = </span>${partsHtml || '0'} <span style="color:#5a7a8e">= </span><span style="color:${eqColor};font-size:17px;font-weight:800">${formatNumberForDisplay(PV)}</span>`;
+        }
+
+        const noticeEl2 = document.getElementById("pvComposeNotice");
+        if(Number.isFinite(diffXY) && Number.isFinite(diffXZ) && diffXY < 0 && diffXZ < 0){
+          if(noticeEl2) noticeEl2.classList.remove("hidden");
+        } else {
+          if(noticeEl2) noticeEl2.classList.add("hidden");
         }
 
         ["pv_extend_gift","pv_pen_gift","pv_hdd_gift","pv_hipass_gift","pv_other3c_gift","pv_points_gift","pv_nav_gift"].forEach(id=>{
@@ -856,6 +1259,46 @@
           const n = parseInputToNumber(raw);
           if (Number.isFinite(n) && n !== 0) el.classList.add('has-value'); else el.classList.remove('has-value');
           if (Number.isFinite(n) && n < 0) el.classList.add('negative'); else el.classList.remove('negative');
+        });
+
+
+        // Z 區可填但沒填 → B 區對應 PV 右側橘紅提示，左側鎖住
+        const zToPV = [
+          { z: 'z_pen',     pvLeft: 'pv_pen',    pvRight: 'pv_pen_gift'    },
+          { z: 'z_hdd',     pvLeft: 'pv_hdd',    pvRight: 'pv_hdd_gift'    },
+          { z: 'z_other3c', pvLeft: 'pv_other3c', pvRight: 'pv_other3c_gift'},
+          { z: 'z_hipass',  pvLeft: 'pv_hipass', pvRight: 'pv_hipass_gift' },
+          { z: 'z_points',  pvLeft: 'pv_points', pvRight: 'pv_points_gift' },
+          { z: 'z_nav',     pvLeft: 'pv_nav',    pvRight: 'pv_nav_gift'    },
+        ];
+        zToPV.forEach(({ z, pvLeft, pvRight }) => {
+          const zEl      = document.getElementById(z);
+          const leftEl   = document.getElementById(pvLeft);
+          const rightEl  = document.getElementById(pvRight);
+          if (!zEl || !leftEl || !rightEl) return;
+
+          const zCanFill  = !zEl.disabled;
+          const zHasValue = (zEl.dataset.raw ?? '') !== '';
+          const shouldRemind = zCanFill && !zHasValue;
+
+          if (shouldRemind) {
+            // 右側橘紅提示
+            rightEl.classList.add('pv-z-remind');
+            rightEl.placeholder = '請先填寫左側 Z 區對應金額';
+            // 左側鎖住
+            leftEl.disabled = true;
+            leftEl.dataset.raw = '';
+            applyFormattingToInput(leftEl);
+          } else {
+            rightEl.classList.remove('pv-z-remind');
+            rightEl.placeholder = '若為贈送請輸入扣除產品 PV';
+            // 只有原本就應該解鎖的才解鎖（非 pen/hdd/hipass/other3c/points）
+            // 這些由原本的 disabled 規則管；nav 不在鎖定清單所以不動
+            const alwaysLocked = ['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points'];
+            if (!alwaysLocked.includes(pvLeft)) {
+              // pv_nav：不在 alwaysLocked，保持原樣
+            }
+          }
         });
 
       }catch(err){
@@ -909,6 +1352,273 @@
     }
 
     window.addEventListener('DOMContentLoaded', init);
+  </script>
+
+  <!-- ── 進度指示器 ── -->
+  <div id="progress-bar-wrap">
+    <div class="prog-steps">
+      <div class="prog-step" id="prog-X">
+        <div class="prog-dot"></div>
+        <div class="prog-label">X 訂單金額</div>
+      </div>
+      <div class="prog-line"></div>
+      <div class="prog-step" id="prog-Y">
+        <div class="prog-dot"></div>
+        <div class="prog-label">Y 產品定價</div>
+      </div>
+      <div class="prog-line"></div>
+      <div class="prog-step" id="prog-Z">
+        <div class="prog-dot"></div>
+        <div class="prog-label">Z 標準總額</div>
+      </div>
+      <div class="prog-line"></div>
+      <div class="prog-step" id="prog-PV">
+        <div class="prog-dot"></div>
+        <div class="prog-label">PV 計算</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 底部固定 PV 結果列 ── -->
+  <div id="sticky-result" class="sticky-hidden">
+    <div class="sticky-inner">
+      <div class="sticky-label">PV 結果</div>
+      <div id="sticky-pv" class="sticky-pv">—</div>
+      <div class="sticky-sub">
+        <span class="sticky-item">溢收／短收：<strong id="sticky-surplus">—</strong></span>
+        <span class="sticky-sep">｜</span>
+        <span class="sticky-item">A（主產品PV）：<strong id="sticky-A">—</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* ── 進度指示器 ── */
+    #progress-bar-wrap {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--c2);
+      padding: 10px 20px;
+      margin: -28px -16px 20px;
+      box-shadow: 0 2px 12px rgba(26,111,168,0.08);
+    }
+    .prog-steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .prog-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 70px;
+    }
+    .prog-dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: #d0e4f0;
+      border: 2px solid #b8d9ef;
+      transition: all .3s;
+    }
+    .prog-step.done .prog-dot {
+      background: var(--c3);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(26,111,168,0.15);
+    }
+    .prog-step.active .prog-dot {
+      background: var(--accent);
+      border-color: var(--accent-deep);
+      box-shadow: 0 0 0 4px rgba(26,111,168,0.2);
+      animation: pulse-dot .8s ease-in-out infinite alternate;
+    }
+    @keyframes pulse-dot {
+      from { box-shadow: 0 0 0 3px rgba(26,111,168,0.2); }
+      to   { box-shadow: 0 0 0 6px rgba(26,111,168,0.08); }
+    }
+    .prog-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .prog-step.done .prog-label,
+    .prog-step.active .prog-label {
+      color: var(--accent-deep);
+      font-weight: 700;
+    }
+    .prog-line {
+      flex: 1;
+      height: 2px;
+      background: #d0e4f0;
+      margin-bottom: 18px;
+      transition: background .3s;
+      min-width: 20px;
+    }
+    .prog-line.done { background: var(--c3); }
+
+    /* ── 摺疊樣式 ── */
+    .collapsible-title {
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .collapsible-title:hover { opacity: .85; }
+    .collapse-arrow {
+      font-size: 11px;
+      color: var(--accent);
+      transition: transform .25s;
+      margin-left: auto;
+    }
+    .collapse-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    .collapsible-content {
+      overflow: hidden;
+      transition: max-height .3s ease, opacity .3s ease;
+      max-height: 600px;
+      opacity: 1;
+    }
+    .collapsible-content.collapsed {
+      max-height: 0;
+      opacity: 0;
+    }
+    .collapse-arrow.rotated { transform: rotate(-90deg); }
+
+    /* ── 底部 sticky bar ── */
+    #sticky-result {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(135deg, rgba(14,77,122,0.97), rgba(26,111,168,0.97));
+      backdrop-filter: blur(10px);
+      color: #fff;
+      padding: 10px 24px;
+      box-shadow: 0 -4px 20px rgba(14,77,122,0.25);
+      z-index: 200;
+      transition: transform .3s ease;
+    }
+    #sticky-result.sticky-hidden { transform: translateY(100%); }
+    .sticky-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .sticky-label {
+      font-size: 12px;
+      font-weight: 600;
+      opacity: .75;
+      letter-spacing: 1px;
+    }
+    .sticky-pv {
+      font-size: 26px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 1px;
+      min-width: 120px;
+    }
+    .sticky-pv.negative { color: #ffaaaa; }
+    .sticky-sub {
+      font-size: 13px;
+      opacity: .85;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .sticky-sep { opacity: .4; }
+    .sticky-item strong { font-weight: 700; }
+  </style>
+
+  <script>
+    // ── 摺疊補充項目 ──
+    function toggleOptional() {
+      const content = document.getElementById('optional-content');
+      const hint = document.getElementById('optional-hint');
+      const isCollapsed = content.classList.toggle('collapsed');
+      hint.textContent = isCollapsed ? '點擊展開 ▼' : '點擊收起 ▲';
+    }
+
+    // ── 進度指示器更新 ──
+    function updateProgress() {
+      const X  = parseInputToNumber(document.getElementById('X').dataset.raw ?? '');
+      const yMain = parseInputToNumber(document.getElementById('y_main').dataset.raw ?? '');
+      const A  = parseInputToNumber(document.getElementById('A').dataset.raw ?? '');
+
+      const xDone  = Number.isFinite(X) && X > 0;
+      const yDone  = Number.isFinite(yMain) && yMain > 0;
+      const zDone  = xDone && yDone;
+      const pvDone = Number.isFinite(A) && A > 0;
+
+      const steps = [
+        { el: 'prog-X',  done: xDone,  active: !xDone },
+        { el: 'prog-Y',  done: yDone,  active: xDone && !yDone },
+        { el: 'prog-Z',  done: zDone,  active: yDone && !zDone },
+        { el: 'prog-PV', done: pvDone, active: zDone && !pvDone },
+      ];
+      steps.forEach(s => {
+        const el = document.getElementById(s.el);
+        if (!el) return;
+        el.classList.toggle('done',   s.done && !s.active);
+        el.classList.toggle('active', s.active);
+      });
+
+      // 連線段也跟著變色
+      const lines = document.querySelectorAll('.prog-line');
+      lines[0]?.classList.toggle('done', xDone);
+      lines[1]?.classList.toggle('done', yDone);
+      lines[2]?.classList.toggle('done', zDone);
+    }
+
+    // ── sticky bar 更新 ──
+    function updateStickyBar() {
+      const pvEl = document.getElementById('PV_value');
+      const pvText = pvEl?.innerText ?? '';
+      const stickyBar = document.getElementById('sticky-result');
+      const stickyPv  = document.getElementById('sticky-pv');
+      const stickySurplus = document.getElementById('sticky-surplus');
+      const stickyA = document.getElementById('sticky-A');
+
+      if (!pvText || pvText === '—') {
+        stickyBar.classList.add('sticky-hidden');
+        return;
+      }
+      stickyBar.classList.remove('sticky-hidden');
+      stickyPv.textContent = pvText;
+      stickyPv.classList.toggle('negative', pvEl.classList.contains('negative'));
+
+      // 溢收/短收
+      const remaining = document.getElementById('surplus_remaining')?.innerText ?? '';
+      const surplus   = document.getElementById('surplus_amount')?.innerText ?? '';
+      const roundEl   = document.querySelector('#simpleCalc');
+      // 判斷短收（PV 計算 roundVal < 0）
+      const simpleText = roundEl?.textContent ?? '';
+      const isShort = simpleText.includes('短收');
+      stickySurplus.textContent = (isShort ? '短收 ' : '溢收 ') + (remaining || surplus || '—');
+
+      const A = document.getElementById('A')?.dataset.raw ?? '';
+      stickyA.textContent = A ? new Intl.NumberFormat('zh-TW').format(Number(A)) : '—';
+    }
+
+    // ── hook 進原本的 calculatePV 觸發後更新 ──
+    const _origCalc = calculatePV;
+    calculatePV = function() {
+      _origCalc.apply(this, arguments);
+      updateProgress();
+      updateStickyBar();
+    };
   </script>
 </body>
 </html>
