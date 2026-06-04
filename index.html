@@ -547,7 +547,7 @@
     <h3>
       <span class="section-badge">PV</span>
       PV 組成
-      <span id="pvComposeNotice" class="warn-inline hidden" role="alert" aria-live="assertive">▶ 左側 PV 欄位已鎖定（延長授權、選才導航除外），請在右側扣除相對應產品 PV。</span>
+      <span id="pvComposeNotice" class="warn-inline hidden" role="alert" aria-live="assertive">▶ 因訂單金額短收，B 區左側 PV 欄位已全部鎖定，請確認訂單金額是否正確。</span>
     </h3>
 
     <!-- A -->
@@ -981,7 +981,7 @@
         "pen","hdd","other3c","hipass","points","nav"
       ];
       const zIds = ["z_pen","z_hdd","z_other3c","z_hipass","z_points","z_nav"];
-      const pvLeftIds = ["pv_pen","pv_hdd","pv_hipass","pv_other3c","pv_points"];
+      const pvLeftIds = ["pv_extend","pv_pen","pv_hdd","pv_hipass","pv_other3c","pv_points","pv_nav"];
       idsToLock.forEach(id=>{
         const el = document.getElementById(id);
         if (!el) return;
@@ -1180,6 +1180,7 @@
 
         let PV = NaN;
         if (Number.isFinite(X)) PV = A + roundVal + B;
+        window._lastRoundVal = roundVal; // 供 sticky bar 使用
 
         const pvEl = document.getElementById("PV_value");
         if (Number.isFinite(PV)) {
@@ -1599,14 +1600,13 @@
       stickyPv.textContent = pvText;
       stickyPv.classList.toggle('negative', pvEl.classList.contains('negative'));
 
-      // 溢收/短收
-      const remaining = document.getElementById('surplus_remaining')?.innerText ?? '';
-      const surplus   = document.getElementById('surplus_amount')?.innerText ?? '';
-      const roundEl   = document.querySelector('#simpleCalc');
-      // 判斷短收（PV 計算 roundVal < 0）
-      const simpleText = roundEl?.textContent ?? '';
-      const isShort = simpleText.includes('短收');
-      stickySurplus.textContent = (isShort ? '短收 ' : '溢收 ') + (remaining || surplus || '—');
+      // 溢收/短收：直接從 roundVal 判斷
+      const roundVal = window._lastRoundVal ?? 0;
+      const isShort  = roundVal < 0;
+      const absVal   = Math.abs(roundVal);
+      const amtDisplay = absVal > 0 ? new Intl.NumberFormat('zh-TW').format(absVal) : '—';
+      stickySurplus.textContent = (isShort ? '短收 ' : '溢收 ') + amtDisplay;
+      stickySurplus.style.color = isShort ? '#ffaaaa' : '#ffffff';
 
       const A = document.getElementById('A')?.dataset.raw ?? '';
       stickyA.textContent = A ? new Intl.NumberFormat('zh-TW').format(Number(A)) : '—';
