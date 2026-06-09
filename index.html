@@ -24,6 +24,12 @@
       min-height: 100vh; color: var(--text);
       padding: 28px 16px 110px;
     }
+    /* ── 整體置中容器 ── */
+    .page-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      width: 100%;
+    }
 
     /* ── Header ── */
     .page-header { text-align:center; margin-bottom:32px; }
@@ -48,11 +54,11 @@
 
     /* ── Rows ── */
     .row { display:flex; align-items:center; gap:8px; margin:7px 0; flex-wrap:wrap; }
-    label { width:clamp(130px,26vw,300px); color:var(--text); font-size:14px; font-weight:500; flex-shrink:0; }
+    label { width:220px; color:var(--text); font-size:14px; font-weight:500; flex-shrink:0; }
 
     /* ── Inputs ── */
     input[type="text"].num-input {
-      width:clamp(110px,13vw,160px); padding:9px 12px;
+      width:160px; padding:9px 12px;
       border:1.5px solid var(--input-border); border-radius:var(--radius-sm);
       text-align:right; background:var(--input-bg);
       font-size:14px; font-family:inherit; color:var(--text);
@@ -94,7 +100,7 @@
     /* ── 合併加購區：雙欄佈局 ── */
     .addon-col-header {
       display:grid;
-      grid-template-columns: clamp(130px,26vw,300px) clamp(110px,13vw,160px) clamp(110px,13vw,160px);
+      grid-template-columns: 220px 160px 160px;
       gap:8px; align-items:center;
       padding-bottom:8px; margin-bottom:4px;
       border-bottom:1.5px solid var(--c3);
@@ -102,7 +108,7 @@
     .addon-col-label { font-size:11px; font-weight:700; color:var(--accent); text-align:right; white-space:nowrap; }
     .addon-row {
       display:grid;
-      grid-template-columns: clamp(130px,26vw,300px) clamp(110px,13vw,160px) clamp(110px,13vw,160px) auto;
+      grid-template-columns: 220px 160px 160px auto;
       gap:8px; align-items:center;
       margin:6px 0;
     }
@@ -124,7 +130,7 @@
     .tooltip { margin-left:6px; color:var(--danger); font-weight:700; background:var(--danger-light); border:1px solid var(--danger-border); border-radius:50%; width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; font-size:12px; cursor:help; }
     .auto-fill-badge { display:inline-block; font-size:10px; font-weight:700; color:#27ae60; background:#eafbf1; border:1px solid #a8e6c3; border-radius:10px; padding:1px 7px; margin-left:4px; white-space:nowrap; }
 
-    .pv-label { width:clamp(150px,28vw,280px); font-size:14px; flex-shrink:0; }
+    .pv-label { width:240px; font-size:14px; flex-shrink:0; }
     .hidden { display:none !important; }
     .subtotal-row { margin-top:12px; padding-top:12px; border-top:1.5px solid var(--c2); }
     .field-hint { font-size:11px; color:#8aabbd; margin:0 0 4px 0; padding-left:2px; line-height:1.5; }
@@ -148,6 +154,7 @@
       .pv-row > div[style*="width:80px"] { display:none; }
       .section { padding:14px 12px; }
       .sub-block { padding:10px 12px; }
+      .page-wrap { padding:0; }
     }
     @media (max-width:480px) {
       input[type="text"].num-input { width:100%; }
@@ -156,6 +163,7 @@
 </head>
 <body>
 
+<div class="page-wrap">
   <div class="page-header">
     <div class="header-bar">
       <div class="header-icon">🧮</div>
@@ -854,6 +862,8 @@
     window.addEventListener('DOMContentLoaded',init);
   </script>
 
+</div><!-- /page-wrap -->
+
   <!-- ── 進度指示器 ── -->
   <div id="progress-bar-wrap">
     <div class="prog-steps">
@@ -881,7 +891,7 @@
   </div>
 
   <style>
-    #progress-bar-wrap { position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--c2);padding:10px 20px;margin:-28px -16px 20px;box-shadow:0 2px 12px rgba(26,111,168,0.08); }
+    #progress-bar-wrap { position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--c2);padding:10px 20px;margin:0 0 20px;box-shadow:0 2px 12px rgba(26,111,168,0.08); }
     .prog-steps { display:flex;align-items:center;justify-content:center;gap:0;max-width:600px;margin:0 auto; }
     .prog-step  { display:flex;flex-direction:column;align-items:center;gap:4px;min-width:70px; }
     .prog-dot   { width:14px;height:14px;border-radius:50%;background:#d0e4f0;border:2px solid #b8d9ef;transition:all .3s; }
