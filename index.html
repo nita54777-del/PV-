@@ -67,7 +67,7 @@
     }
     /* placeholder 字體隨容器縮放，overflow 裁切不換行 */
     input.num-input::placeholder {
-      font-size: clamp(8px, 1.8cqi, 11px);
+      font-size: clamp(10px, 3cqi, 13px);
       color: #a0b8cc;
       text-align: left;
       overflow: hidden;
@@ -81,6 +81,8 @@
     input.num-input.negative { border-color:var(--danger); color:var(--danger); }
     input.num-input.invalid { border-color:var(--danger); box-shadow:0 0 0 3px rgba(214,62,62,0.10); }
     input.num-input:disabled { background:var(--c1); border-color:#d0e8f4; color:#a0b8c8; cursor:not-allowed; }
+    /* 永遠鎖定的欄位（不隨邏輯開放） */
+    input.num-input.always-locked { background:var(--c1) !important; border-color:#d0e8f4 !important; color:#a0b8c8 !important; cursor:not-allowed !important; pointer-events:none !important; }
     input.num-input.placeholder-warn::placeholder { color:#c0622a; font-weight:600; }
     input.num-input.placeholder-warn { border-color:#e8a87c; background:#fff8f3; }
     input.num-input.pv-remind { border:2px solid #d97b3a !important; background:#fff8f3 !important; box-shadow:0 0 0 3px rgba(217,123,58,0.15) !important; animation:pulse-orange 1.6s ease-in-out infinite; }
@@ -310,11 +312,11 @@
       </div>
 
       <div class="row pv-row"><label class="pv-label" for="pv_extend">PV－延長授權：</label><input class="num-input" type="text" id="pv_extend" data-raw="" placeholder="客戶購買請填 PV" inputmode="numeric"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_extend_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_extend_gift_icon" class="tooltip hidden">!</span></div>
-      <div class="row pv-row"><label class="pv-label" for="pv_pen">PV－3C類－智能筆：</label><input class="num-input" type="text" id="pv_pen" data-raw="" disabled placeholder="客戶購買請填 PV" inputmode="numeric"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_pen_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_pen_gift_icon" class="tooltip hidden">!</span></div>
-      <div class="row pv-row"><label class="pv-label" for="pv_hdd">PV－3C類－2T 硬碟：</label><input class="num-input" type="text" id="pv_hdd" data-raw="" disabled placeholder="客戶購買請填 PV" inputmode="numeric"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_hdd_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_hdd_gift_icon" class="tooltip hidden">!</span></div>
-      <div class="row pv-row"><label class="pv-label" for="pv_hipass">PV－HIPASS：</label><input class="num-input" type="text" id="pv_hipass" data-raw="" disabled placeholder="客戶購買請填 PV" inputmode="numeric"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_hipass_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_hipass_gift_icon" class="tooltip hidden">!</span></div>
-      <div class="row pv-row"><label class="pv-label" for="pv_other3c">PV－其他 3C 類：</label><input class="num-input" type="text" id="pv_other3c" data-raw="" disabled placeholder="客戶購買請填 PV" inputmode="numeric"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_other3c_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_other3c_gift_icon" class="tooltip hidden">!</span></div>
-      <div class="row pv-row"><label class="pv-label" for="pv_points">PV－好師到點數：</label><input class="num-input" type="text" id="pv_points" data-raw="" disabled placeholder="客戶購買請填 PV" inputmode="numeric"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_points_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_points_gift_icon" class="tooltip hidden">!</span></div>
+      <div class="row pv-row"><label class="pv-label" for="pv_pen">PV－3C類－智能筆：</label><input class="num-input" type="text" id="pv_pen" data-raw="" disabled placeholder="客戶購買請填 PV" inputmode="numeric" style="pointer-events:none;"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_pen_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_pen_gift_icon" class="tooltip hidden">!</span></div>
+      <div class="row pv-row"><label class="pv-label" for="pv_hdd">PV－3C類－2T 硬碟：</label><input class="num-input" type="text" id="pv_hdd" data-raw="" disabled placeholder="客戶購買請填 PV" inputmode="numeric" style="pointer-events:none;"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_hdd_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_hdd_gift_icon" class="tooltip hidden">!</span></div>
+      <div class="row pv-row"><label class="pv-label" for="pv_hipass">PV－HIPASS：</label><input class="num-input" type="text" id="pv_hipass" data-raw="" disabled placeholder="客戶購買請填 PV" inputmode="numeric" style="pointer-events:none;"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_hipass_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_hipass_gift_icon" class="tooltip hidden">!</span></div>
+      <div class="row pv-row"><label class="pv-label" for="pv_other3c">PV－其他 3C 類：</label><input class="num-input" type="text" id="pv_other3c" data-raw="" disabled placeholder="客戶購買請填 PV" inputmode="numeric" style="pointer-events:none;"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_other3c_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_other3c_gift_icon" class="tooltip hidden">!</span></div>
+      <div class="row pv-row"><label class="pv-label" for="pv_points">PV－好師到點數：</label><input class="num-input" type="text" id="pv_points" data-raw="" disabled placeholder="客戶購買請填 PV" inputmode="numeric" style="pointer-events:none;"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_points_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_points_gift_icon" class="tooltip hidden">!</span></div>
       <div class="row pv-row"><label class="pv-label" for="pv_nav">PV－選才導航：</label><input class="num-input" type="text" id="pv_nav" data-raw="" placeholder="客戶購買請填 PV" inputmode="numeric"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_nav_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_nav_gift_icon" class="tooltip hidden">!</span></div>
 
       <div class="row subtotal-row">
@@ -442,6 +444,8 @@
       {y:'nav',    z:'z_nav'    },
     ];
 
+const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points']);
+
     const autoFilledZ = new Set();
     const manualClearedZ = new Set(); // 使用者主動清空的欄位，autoFillZ 不碰
 
@@ -525,7 +529,8 @@
       const toLock=['y_extend','pen','hdd','other3c','hipass','points','nav','z_pen','z_hdd','z_other3c','z_hipass','z_points','z_nav','pv_extend','pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points','pv_nav'];
       toLock.forEach(id=>{
         const el=document.getElementById(id); if(!el)return;
-        if(shouldLock){ el.disabled=true; el.dataset.raw=''; applyFmt(el); } else { el.disabled=false; }
+        if(shouldLock){ el.disabled=true; el.dataset.raw=''; applyFmt(el); }
+        else if(!ALWAYS_LOCKED_PV.has(id)){ el.disabled=false; }
       });
       if(shouldLock) clearAutoFilled();
 
@@ -664,7 +669,7 @@
             leftEl.disabled=true; leftEl.dataset.raw=''; applyFmt(leftEl);
             rightEl.classList.add('pv-z-remind'); rightEl.placeholder='溢收不足加購 → 扣PV';
           } else if(zHas){
-            if(!shouldLock)leftEl.disabled=false;
+            if(!shouldLock&&!ALWAYS_LOCKED_PV.has(pvL))leftEl.disabled=false;
             rightEl.classList.remove('pv-z-remind'); rightEl.placeholder='贈送請填扣除 PV';
           } else {
             leftEl.disabled=true; leftEl.dataset.raw=''; applyFmt(leftEl);
@@ -739,7 +744,8 @@
       });
       autoFilledZ.clear(); manualClearedZ.clear();
       document.querySelectorAll('.auto-fill-badge').forEach(b=>b.classList.add('hidden'));
-      ['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points'].forEach(id=>{ const el=document.getElementById(id);if(el)el.disabled=true; });
+      // 永遠鎖定的 PV 欄位
+      ALWAYS_LOCKED_PV.forEach(id=>{ const el=document.getElementById(id);if(el){ el.disabled=true; el.setAttribute('tabindex','-1'); } });
       calculatePV();
     }
 
@@ -855,7 +861,7 @@
         const el=document.getElementById(id);if(!el)return;
         el.addEventListener('input',calculatePV);el.addEventListener('blur',calculatePV);
       });
-      ['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points'].forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=true;});
+      ALWAYS_LOCKED_PV.forEach(id=>{ const el=document.getElementById(id);if(el){ el.disabled=true; el.dataset.raw=''; applyFmt(el); } });
       document.querySelectorAll('.num-input').forEach(applyFmt);
       calculatePV();
     }
