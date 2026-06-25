@@ -24,14 +24,8 @@
       min-height: 100vh; color: var(--text);
       padding: 28px 16px 110px;
     }
-    /* ── 整體置中容器 ── */
-    .page-wrap {
-      max-width: 780px;
-      margin: 0 auto;
-      width: 100%;
-    }
+    .page-wrap { max-width: 780px; margin: 0 auto; width: 100%; }
 
-    /* ── Header ── */
     .page-header { text-align:center; margin-bottom:32px; }
     .page-header h1 { font-size:30px; font-weight:700; color:var(--accent-deep); margin:0 0 6px; letter-spacing:1px; }
     .page-header .subtitle { font-size:13px; color:var(--text-muted); }
@@ -41,22 +35,18 @@
     .reset-btn:hover { background:var(--danger-light); border-color:var(--danger); }
     .reset-btn:active { transform:scale(0.97); }
 
-    /* ── Sections ── */
     .section { background:#fff; border:1px solid var(--c2); border-radius:var(--radius); padding:20px 22px; margin-bottom:16px; box-shadow:var(--shadow); position:relative; overflow:hidden; }
     .section::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--c3),var(--c4)); }
     h3 { margin:0 0 14px; color:var(--accent-deep); font-size:15px; font-weight:700; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
     h3 .section-badge { background:linear-gradient(135deg,var(--c3),var(--c4)); color:var(--accent-deep); font-size:11px; font-weight:700; padding:2px 10px; border-radius:20px; letter-spacing:1px; }
 
-    /* ── Sub blocks ── */
     .sub-block { border:1.5px dashed var(--c3); border-radius:var(--radius-sm); padding:14px 16px; margin-bottom:12px; background:linear-gradient(to bottom right,#fafdff,#f0f9fe); }
     .sub-block-title { font-weight:700; font-size:13px; color:var(--accent); margin-bottom:10px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
     .sub-block-title::before { content:''; width:4px; height:14px; background:linear-gradient(to bottom,var(--c3),var(--c4)); border-radius:2px; display:inline-block; flex-shrink:0; }
 
-    /* ── Rows ── */
     .row { display:flex; align-items:center; gap:8px; margin:7px 0; flex-wrap:wrap; }
     label { width:220px; color:var(--text); font-size:14px; font-weight:500; flex-shrink:0; }
 
-    /* ── Inputs ── */
     input[type="text"].num-input {
       width:160px; padding:9px 12px;
       border:1.5px solid var(--input-border); border-radius:var(--radius-sm);
@@ -65,14 +55,10 @@
       transition:box-shadow .15s,border-color .15s,background-color .15s;
       outline:none; flex-shrink:0;
     }
-    /* placeholder 字體隨容器縮放，overflow 裁切不換行 */
     input.num-input::placeholder {
       font-size: clamp(10px, 3cqi, 13px);
-      color: #a0b8cc;
-      text-align: left;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      color: #a0b8cc; text-align: left;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
     }
     input.num-input { container-type: inline-size; }
     input.num-input:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(26,111,168,0.12); }
@@ -81,7 +67,6 @@
     input.num-input.negative { border-color:var(--danger); color:var(--danger); }
     input.num-input.invalid { border-color:var(--danger); box-shadow:0 0 0 3px rgba(214,62,62,0.10); }
     input.num-input:disabled { background:var(--c1); border-color:#d0e8f4; color:#a0b8c8; cursor:not-allowed; }
-    /* 永遠鎖定的欄位（不隨邏輯開放） */
     input.num-input.always-locked { background:var(--c1) !important; border-color:#d0e8f4 !important; color:#a0b8c8 !important; cursor:not-allowed !important; pointer-events:none !important; }
     input.num-input.placeholder-warn::placeholder { color:#c0622a; font-weight:600; }
     input.num-input.placeholder-warn { border-color:#e8a87c; background:#fff8f3; }
@@ -93,31 +78,21 @@
     input.pv-z-remind::placeholder { color:#c0622a !important; font-weight:600; }
     @keyframes pulse-orange { 0%,100%{box-shadow:0 0 0 3px rgba(217,123,58,0.15);} 50%{box-shadow:0 0 0 6px rgba(217,123,58,0.08);} }
 
-    /* ── Value / readonly ── */
     .value { font-weight:700; font-size:15px; min-width:100px; display:inline-block; text-align:right; padding:4px 10px; border-radius:6px; }
     .positive { color:var(--accent-deep); } .negative { color:var(--danger); }
     .readonly { padding:8px 12px; background:var(--c1); border:1.5px solid var(--c2); border-radius:var(--radius-sm); min-width:130px; text-align:right; font-size:14px; color:var(--accent-deep); font-weight:500; }
     .muted { color:var(--text-muted); font-size:13px; }
 
-    /* ── 合併加購區：雙欄佈局 ── */
     .addon-col-header {
-      display:grid;
-      grid-template-columns: 220px 160px 160px;
-      gap:8px; align-items:center;
-      padding-bottom:8px; margin-bottom:4px;
+      display:grid; grid-template-columns: 220px 160px 160px;
+      gap:8px; align-items:center; padding-bottom:8px; margin-bottom:4px;
       border-bottom:1.5px solid var(--c3);
     }
     .addon-col-label { font-size:11px; font-weight:700; color:var(--accent); text-align:right; white-space:nowrap; }
-    .addon-row {
-      display:grid;
-      grid-template-columns: 220px 160px 160px auto;
-      gap:8px; align-items:center;
-      margin:6px 0;
-    }
+    .addon-row { display:grid; grid-template-columns: 220px 160px 160px auto; gap:8px; align-items:center; margin:6px 0; }
     .addon-row label { width:auto; }
     .addon-surplus-info { display:flex; align-items:center; gap:8px; margin-top:10px; padding-top:10px; border-top:1.5px dashed var(--c3); flex-wrap:wrap; }
 
-    /* ── Result ── */
     #section-result { background:linear-gradient(135deg,#e8f9fd,#d8f0fc); border:2px solid var(--c3); }
     #section-result::before { height:4px; background:linear-gradient(90deg,var(--c4),#5ab8f5,var(--c4)); }
     #PV_value { font-size:26px !important; padding:4px 14px !important; background:linear-gradient(135deg,var(--c2),var(--c3)); border-radius:8px; box-shadow:0 2px 10px rgba(26,111,168,0.15); }
@@ -125,7 +100,6 @@
     pre { background:var(--c1); padding:12px 14px; border-radius:var(--radius-sm); overflow:auto; white-space:pre-wrap; font-size:13px; color:var(--text-muted); border:1px solid var(--c2); }
     .small { font-size:13px; color:var(--text-muted); margin-bottom:6px; }
 
-    /* ── Notices / Warnings ── */
     .z-note { font-size:13px; color:var(--danger); font-weight:600; margin:10px 0 6px; background:var(--danger-light); border:1px solid var(--danger-border); border-radius:6px; padding:8px 12px; display:block; }
     .notice-box { padding:10px 14px; border-radius:var(--radius-sm); background:var(--danger-light); border:1.5px solid var(--danger-border); color:var(--danger); font-weight:600; font-size:14px; margin-top:10px; }
     .warn-inline { color:var(--danger); font-weight:700; margin-left:4px; font-size:12px; background:var(--danger-light); padding:3px 7px; border-radius:4px; white-space:nowrap; }
@@ -138,11 +112,9 @@
     .field-hint { font-size:11px; color:#8aabbd; margin:0 0 4px 0; padding-left:2px; line-height:1.5; }
     .block-hint { font-size:12px; color:#8aabbd; margin:-6px 0 10px 2px; line-height:1.5; }
 
-    /* B 欄標題 */
     .pv-col-header { display:flex; gap:10px; align-items:center; margin-bottom:8px; padding-bottom:8px; border-bottom:1px dashed var(--c3); }
     .pv-col-label { font-size:11px; font-weight:700; color:var(--accent); text-align:right; white-space:nowrap; }
 
-    /* ── RWD ── */
     @media (max-width:700px) {
       body { padding:16px 10px 110px; }
       label { width:100%; }
@@ -195,7 +167,6 @@
       <div class="row"><label for="y_main">主產品：</label><input type="text" id="y_main" class="num-input" data-raw="" inputmode="numeric"></div>
       <div class="field-hint">主要課程產品的標準售價。若 X 小於此金額，加購欄位將自動鎖定。</div>
       <div class="row"><label for="y_extend">延長授權：</label><input type="text" id="y_extend" class="num-input" data-raw="" inputmode="numeric"></div>
-      <div class="row"><label for="y_otherfee">其他費用（如書籍費）：</label><input type="text" id="y_otherfee" class="num-input" data-raw="" inputmode="numeric"></div>
       <div class="row"><label for="y_servicefee">手續費：</label><input type="text" id="y_servicefee" class="num-input" data-raw="" inputmode="numeric"></div>
     </div>
 
@@ -210,14 +181,12 @@
       </div>
       <div class="z-note">▶ 若溢收金額不足加購項目優惠價，則依實際溢收金額換算 PV；請在 B-PV 小計下方扣除對應 PV。</div>
 
-      <!-- 欄標題 -->
       <div class="addon-col-header">
         <div></div>
         <div class="addon-col-label">標準定價</div>
         <div class="addon-col-label">實際分配金額<br><span style="font-weight:400;color:var(--text-muted);">（溢收自動帶入）</span></div>
       </div>
 
-      <!-- 各加購品項 -->
       <div class="addon-row">
         <label for="pen">3C類－智能筆：</label>
         <input type="text" id="pen" class="num-input" data-raw="" disabled placeholder="標準定價" inputmode="numeric">
@@ -254,6 +223,13 @@
         <span id="z_points_warn2" class="warn-inline hidden">超過可用溢收</span>
       </div>
       <div class="addon-row">
+        <label for="bookfee">書籍費：</label>
+        <input type="text" id="bookfee" class="num-input" data-raw="" disabled placeholder="標準定價" inputmode="numeric">
+        <input type="text" id="z_bookfee" class="num-input" data-raw="" disabled placeholder="分配金額" inputmode="numeric">
+        <span id="z_bookfee_auto" class="auto-fill-badge hidden">自動帶入</span>
+        <span id="z_bookfee_warn2" class="warn-inline hidden">超過可用溢收</span>
+      </div>
+      <div class="addon-row">
         <label for="nav">選才導航：</label>
         <input type="text" id="nav" class="num-input" data-raw="" disabled placeholder="標準定價" inputmode="numeric">
         <input type="text" id="z_nav" class="num-input" data-raw="" disabled placeholder="分配金額" inputmode="numeric">
@@ -261,7 +237,6 @@
         <span id="z_nav_warn2" class="warn-inline hidden">超過可用溢收</span>
       </div>
 
-      <!-- 溢收資訊 -->
       <div id="addon-surplus-info" class="addon-surplus-info hidden">
         <span class="muted">溢收（X − Z）：</span>
         <span id="surplus_amount" class="value positive" style="font-size:14px;min-width:80px;"></span>
@@ -281,7 +256,6 @@
     <div class="block-hint" style="margin:0 0 10px;">自動由 Y 必填項目加總，無需手動輸入。</div>
     <div class="row"><label>主產品：</label><div id="z_main_display" class="readonly"></div></div>
     <div class="row"><label>延長授權：</label><div id="z_extend_display" class="readonly"></div></div>
-    <div class="row"><label>其他費用：</label><div id="z_otherfee_display" class="readonly"></div></div>
     <div class="row"><label>手續費：</label><div id="z_servicefee_display" class="readonly"></div></div>
   </div>
 
@@ -292,23 +266,21 @@
       <span id="pvComposeNotice" class="warn-inline hidden">▶ 因訂單金額短收，B 區左側 PV 欄位已全部鎖定，請確認訂單金額是否正確。</span>
     </h3>
 
-    <!-- A -->
     <div class="sub-block">
       <div class="sub-block-title">A — PV 主產品</div>
       <div class="block-hint">填入主產品對應的 PV 點數。</div>
       <div class="row"><label for="A">PV－主產品（A）：</label><input type="text" id="A" class="num-input" data-raw="" inputmode="numeric"></div>
     </div>
 
-    <!-- B -->
     <div class="sub-block">
       <div class="sub-block-title">B — PV 小計</div>
       <div class="block-hint">左側填客戶購買 PV；右側填贈送需扣除 PV（請輸入負數）。</div>
 
       <div class="pv-col-header">
         <div class="pv-label"></div>
-        <div class="pv-col-label" style="min-width:clamp(110px,13vw,160px);">← 購買 PV</div>
+        <div class="pv-col-label" style="min-width:160px;">← 購買 PV</div>
         <div style="width:80px;"></div>
-        <div class="pv-col-label" style="min-width:clamp(110px,13vw,160px);">← 贈送扣除 PV（填負數）</div>
+        <div class="pv-col-label" style="min-width:160px;">← 贈送扣除 PV（填負數）</div>
       </div>
 
       <div class="row pv-row"><label class="pv-label" for="pv_extend">PV－延長授權：</label><input class="num-input" type="text" id="pv_extend" data-raw="" placeholder="客戶購買請填 PV" inputmode="numeric"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_extend_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_extend_gift_icon" class="tooltip hidden">!</span></div>
@@ -317,6 +289,7 @@
       <div class="row pv-row"><label class="pv-label" for="pv_hipass">PV－HIPASS：</label><input class="num-input" type="text" id="pv_hipass" data-raw="" disabled placeholder="客戶購買請填 PV" inputmode="numeric" style="pointer-events:none;"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_hipass_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_hipass_gift_icon" class="tooltip hidden">!</span></div>
       <div class="row pv-row"><label class="pv-label" for="pv_other3c">PV－其他 3C 類：</label><input class="num-input" type="text" id="pv_other3c" data-raw="" disabled placeholder="客戶購買請填 PV" inputmode="numeric" style="pointer-events:none;"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_other3c_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_other3c_gift_icon" class="tooltip hidden">!</span></div>
       <div class="row pv-row"><label class="pv-label" for="pv_points">PV－好師到點數：</label><input class="num-input" type="text" id="pv_points" data-raw="" disabled placeholder="客戶購買請填 PV" inputmode="numeric" style="pointer-events:none;"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_points_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_points_gift_icon" class="tooltip hidden">!</span></div>
+      <div class="row pv-row"><label class="pv-label" for="pv_bookfee">PV－書籍費：</label><input class="num-input" type="text" id="pv_bookfee" data-raw="" disabled placeholder="客戶購買請填 PV" inputmode="numeric" style="pointer-events:none;"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_bookfee_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_bookfee_gift_icon" class="tooltip hidden">!</span></div>
       <div class="row pv-row"><label class="pv-label" for="pv_nav">PV－選才導航：</label><input class="num-input" type="text" id="pv_nav" data-raw="" placeholder="客戶購買請填 PV" inputmode="numeric"><div style="width:80px;flex-shrink:0;"></div><input class="num-input pv-gift-input" type="text" id="pv_nav_gift" data-raw="" placeholder="贈送請填扣除 PV" inputmode="numeric"><span id="pv_nav_gift_icon" class="tooltip hidden">!</span></div>
 
       <div class="row subtotal-row">
@@ -374,15 +347,14 @@
       const n=parseInputToNumber(raw);
       el.classList.toggle('negative', Number.isFinite(n)&&n<0);
     }
-    // z 欄位 id 集合，blur 由 onZInput 專責，不重複觸發
-    const Z_IDS = new Set(['z_pen','z_hdd','z_other3c','z_hipass','z_points','z_nav']);
+    const Z_IDS = new Set(['z_pen','z_hdd','z_other3c','z_hipass','z_points','z_bookfee','z_nav']);
     function onBlur(e){
       const el=e.target;
       const n=parseInputToNumber(sanitize(el.value));
       el.dataset.raw = Number.isFinite(n)?String(n):'';
       if(el.classList.contains('pv-gift-input')) autoNeg(el);
       applyFmt(el);
-      if(!Z_IDS.has(el.id)) calculatePV(); // z 欄由 onZInput 處理，不重複
+      if(!Z_IDS.has(el.id)) calculatePV();
     }
     function onInput(e){
       const el=e.target;
@@ -430,24 +402,24 @@
     function floorHundred(v){ return Number.isFinite(v)?Math.floor(v/100)*100:0; }
 
     function computeZBase(){
-      const ym=getN('y_main')??0, ye=getN('y_extend')??0, yo=getN('y_otherfee')??0, ys=getN('y_servicefee')??0;
-      return {y_main:ym,y_extend:ye,y_otherfee:yo,y_servicefee:ys,Z:ym+ye+yo+ys};
+      const ym=getN('y_main')??0, ye=getN('y_extend')??0, ys=getN('y_servicefee')??0;
+      return {y_main:ym,y_extend:ye,y_servicefee:ys,Z:ym+ye+ys};
     }
 
-    // 加購對應表
     const addonPairs = [
-      {y:'pen',    z:'z_pen'    },
-      {y:'hdd',    z:'z_hdd'    },
-      {y:'other3c',z:'z_other3c'},
-      {y:'hipass', z:'z_hipass' },
-      {y:'points', z:'z_points' },
-      {y:'nav',    z:'z_nav'    },
+      {y:'pen',     z:'z_pen'    },
+      {y:'hdd',     z:'z_hdd'    },
+      {y:'other3c', z:'z_other3c'},
+      {y:'hipass',  z:'z_hipass' },
+      {y:'points',  z:'z_points' },
+      {y:'bookfee', z:'z_bookfee'},
+      {y:'nav',     z:'z_nav'    },
     ];
 
-const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points']);
+    const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points','pv_bookfee']);
 
     const autoFilledZ = new Set();
-    const manualClearedZ = new Set(); // 使用者主動清空的欄位，autoFillZ 不碰
+    const manualClearedZ = new Set();
 
     function autoFillZ(surplus){
       let remaining = surplus;
@@ -457,7 +429,6 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
         const zRaw=zEl.dataset.raw??''; const zVal=parseInputToNumber(zRaw);
         const isManual=!autoFilledZ.has(z)&&zRaw!=='';
 
-        // Y 無值 → 清除自動帶入
         if(!Number.isFinite(yVal)||yVal===0){
           if(autoFilledZ.has(z)){
             autoFilledZ.delete(z); zEl.dataset.raw=''; applyFmt(zEl);
@@ -465,19 +436,14 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
           }
           return;
         }
-
-        // 使用者手填或主動清空 → 不覆蓋
         if(isManual){
           if(Number.isFinite(zVal)&&zVal>0) remaining-=zVal;
           return;
         }
-        // 使用者主動清空 → 跳過，不自動帶入
         if(manualClearedZ.has(z)) return;
 
-        // 自動帶入：先把舊自動值還回
         if(autoFilledZ.has(z)&&Number.isFinite(zVal)&&zVal>0) remaining+=zVal;
 
-        // 溢收不足 → 清自動值，橘紅提示，不鎖
         if(remaining<=0||yVal>remaining){
           if(autoFilledZ.has(z)){
             autoFilledZ.delete(z); zEl.dataset.raw=''; applyFmt(zEl);
@@ -487,7 +453,6 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
           return;
         }
 
-        // 帶入
         autoFilledZ.add(z);
         zEl.dataset.raw=String(yVal); applyFmt(zEl);
         zEl.classList.add('auto-filled'); zEl.classList.remove('surplus-warn');
@@ -526,7 +491,7 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
     function autoNeg(el){ if(!el)return; const n=parseInputToNumber(el.dataset.raw??''); if(Number.isFinite(n)&&n>0)el.dataset.raw=String(-n); }
 
     function lockWhenShort(shouldLock,X,yMainVal){
-      const toLock=['y_extend','pen','hdd','other3c','hipass','points','nav','z_pen','z_hdd','z_other3c','z_hipass','z_points','z_nav','pv_extend','pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points','pv_nav'];
+      const toLock=['y_extend','pen','hdd','other3c','hipass','points','bookfee','nav','z_pen','z_hdd','z_other3c','z_hipass','z_points','z_bookfee','z_nav','pv_extend','pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points','pv_bookfee','pv_nav'];
       toLock.forEach(id=>{
         const el=document.getElementById(id); if(!el)return;
         if(shouldLock){ el.disabled=true; el.dataset.raw=''; applyFmt(el); }
@@ -538,8 +503,8 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
       if(!notice)return;
       if(shouldLock&&Number.isFinite(X)&&Number.isFinite(yMainVal)){
         const short=Math.max(0,yMainVal-X);
-        const sf=getN('y_servicefee')??0, of=getN('y_otherfee')??0;
-        let parts=[]; if(of>0)parts.push(`其他費用少收 (${fmt(of)})`); if(sf>0)parts.push(`手續費少收 (${fmt(sf)})`);
+        const sf=getN('y_servicefee')??0;
+        let parts=[]; if(sf>0)parts.push(`手續費少收 (${fmt(sf)})`);
         let msg=`因實際銷售價小於主產品標準價，主產品已少收 (${fmt(short)})。`;
         if(parts.length)msg+=' '+parts.join('；')+'。';
         msg+=' 因此無法新增其他加購項目。';
@@ -551,7 +516,7 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
       try{
         const zb=computeZBase(); const Z=zb.Z;
         setTxt('Z_value',Z); setTxt('z_main_display',zb.y_main); setTxt('z_extend_display',zb.y_extend);
-        setTxt('z_otherfee_display',zb.y_otherfee); setTxt('z_servicefee_display',zb.y_servicefee);
+        setTxt('z_servicefee_display',zb.y_servicefee);
 
         const X=parseInputToNumber(document.getElementById('X').dataset.raw??'');
         setTxt('X_value',Number.isFinite(X)?X:NaN);
@@ -560,39 +525,33 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
         const shouldLock=Number.isFinite(X)&&yMainVal>0&&X<yMainVal;
         lockWhenShort(shouldLock,X,yMainVal);
 
-        // 加購標準定價欄：X > 主產品才開放
         const xGtMain=Number.isFinite(X)&&yMainVal>0&&X>yMainVal;
         addonPairs.forEach(({y})=>{
           const el=document.getElementById(y); if(!el)return;
           if(!shouldLock) el.disabled=!xGtMain;
           if(!xGtMain){ el.dataset.raw=''; applyFmt(el); }
-          // placeholder warn
           const hasVal=(el.dataset.raw??'')!=='';
           if(xGtMain&&!hasVal){ el.placeholder='若訂單有出現則需要填上金額'; el.classList.add('placeholder-warn'); }
           else { el.placeholder='標準定價'; el.classList.remove('placeholder-warn'); }
         });
 
-        // y_extend / y_otherfee / y_servicefee placeholder warn
-        ['y_extend','y_otherfee','y_servicefee'].forEach(id=>{
+        ['y_extend','y_servicefee'].forEach(id=>{
           const el=document.getElementById(id); if(!el)return;
           const hasVal=(el.dataset.raw??'')!=='';
           if(xGtMain&&!hasVal){ el.classList.add('placeholder-warn'); el.placeholder='若訂單有出現則需要填上金額'; }
           else{ el.classList.remove('placeholder-warn'); el.placeholder=''; }
         });
 
-        // Y 總額
-        const pen=getN('pen')??0,hdd=getN('hdd')??0,other3c=getN('other3c')??0,hipass=getN('hipass')??0,points=getN('points')??0,nav=getN('nav')??0;
-        const Y=Z+pen+hdd+other3c+hipass+points+nav;
+        const pen=getN('pen')??0,hdd=getN('hdd')??0,other3c=getN('other3c')??0,hipass=getN('hipass')??0,points=getN('points')??0,bookfee=getN('bookfee')??0,nav=getN('nav')??0;
+        const Y=Z+pen+hdd+other3c+hipass+points+bookfee+nav;
         setTxt('Y_value',Y);
 
         const surplus=Math.max(0,Number.isFinite(X)?X-Z:0);
         const hasSurplus=Number.isFinite(X)&&surplus>0&&!shouldLock;
 
-        // 溢收資訊列
         document.getElementById('addon-surplus-info').classList.toggle('hidden',!hasSurplus);
         setTxt('surplus_amount',surplus);
 
-        // Z 欄位：Y 有值且 xGtMain 就開放，不綁 hasSurplus
         addonPairs.forEach(({y,z})=>{
           const yVal=getN(y); const zEl=document.getElementById(z);
           if(!zEl) return;
@@ -608,7 +567,6 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
           }
         });
 
-        // 自動帶入 Z（有溢收才帶；無溢收清自動值但不鎖）
         if(hasSurplus){
           autoFillZ(surplus);
         } else {
@@ -618,7 +576,6 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
             const b=document.getElementById(z+'_auto');if(b)b.classList.add('hidden');
           });
           autoFilledZ.clear();
-          // Y 有值但無溢收 → 橘紅提示仍可填
           addonPairs.forEach(({y,z})=>{
             const yVal=getN(y); const zEl=document.getElementById(z);
             if(!zEl||zEl.disabled)return;
@@ -629,7 +586,6 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
           });
         }
 
-        // Z addons 加總
         let Z_addons=addonPairs.reduce((s,{z})=>s+(getN(z)??0),0);
         if(Z_addons>surplus)Z_addons=surplus;
         setTxt('Z_addons_value',Z_addons);
@@ -638,21 +594,20 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
 
         const A=getN('A')??0;
 
-        // B 區鎖定
         const bMap=[
-          {y:'pen',    z:'z_pen',    pvL:'pv_pen',    pvR:'pv_pen_gift'    },
-          {y:'hdd',    z:'z_hdd',    pvL:'pv_hdd',    pvR:'pv_hdd_gift'    },
-          {y:'other3c',z:'z_other3c',pvL:'pv_other3c',pvR:'pv_other3c_gift'},
-          {y:'hipass', z:'z_hipass', pvL:'pv_hipass', pvR:'pv_hipass_gift' },
-          {y:'points', z:'z_points', pvL:'pv_points', pvR:'pv_points_gift' },
-          {y:'nav',    z:'z_nav',    pvL:'pv_nav',    pvR:'pv_nav_gift'    },
+          {y:'pen',     z:'z_pen',     pvL:'pv_pen',     pvR:'pv_pen_gift'    },
+          {y:'hdd',     z:'z_hdd',     pvL:'pv_hdd',     pvR:'pv_hdd_gift'    },
+          {y:'other3c', z:'z_other3c', pvL:'pv_other3c', pvR:'pv_other3c_gift'},
+          {y:'hipass',  z:'z_hipass',  pvL:'pv_hipass',  pvR:'pv_hipass_gift' },
+          {y:'points',  z:'z_points',  pvL:'pv_points',  pvR:'pv_points_gift' },
+          {y:'bookfee', z:'z_bookfee', pvL:'pv_bookfee', pvR:'pv_bookfee_gift'},
+          {y:'nav',     z:'z_nav',     pvL:'pv_nav',     pvR:'pv_nav_gift'    },
         ];
-        // pv_extend
+
         const pvExtL=document.getElementById('pv_extend'), pvExtR=document.getElementById('pv_extend_gift');
         const yExtHas=(getN('y_extend')??0)!==0;
         if(pvExtL&&!shouldLock){ pvExtL.disabled=!yExtHas; if(!yExtHas){pvExtL.dataset.raw='';applyFmt(pvExtL);} }
         if(pvExtR){ pvExtR.disabled=false; pvExtR.classList.remove('pv-z-remind'); pvExtR.placeholder='贈送請填扣除 PV'; }
-        // pv_extend 提示
         if(pvExtL){ const hasVal=(pvExtL.dataset.raw??'')!==''; if(yExtHas&&!hasVal&&!pvExtL.disabled)pvExtL.classList.add('pv-remind'); else pvExtL.classList.remove('pv-remind'); }
 
         bMap.forEach(({y,z,pvL,pvR})=>{
@@ -661,7 +616,7 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
           if(!leftEl||!rightEl)return;
           const yHas=Number.isFinite(yVal)&&yVal!==0;
           const zHas=(zEl?.dataset.raw??'')!=='';
-          rightEl.disabled=false; // 右側永遠不鎖
+          rightEl.disabled=false;
           if(!yHas){
             leftEl.disabled=true; leftEl.dataset.raw=''; applyFmt(leftEl);
             rightEl.classList.remove('pv-z-remind'); rightEl.placeholder='贈送請填扣除 PV';
@@ -677,12 +632,10 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
           }
         });
 
-        // B 小計
-        const pvIds=['pv_extend','pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points','pv_nav'];
+        const pvIds=['pv_extend','pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points','pv_bookfee','pv_nav'];
         const B=pvIds.reduce((s,id)=>s+readPV(id).value,0);
         setTxt('B_value',B);
 
-        // roundVal
         let roundVal=0;
         if(Number.isFinite(X)){
           roundVal=remaining>0?floorHundred(remaining):floorHundred(X-Z-Z_addons);
@@ -694,7 +647,6 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
         if(Number.isFinite(PV)){ pvEl.innerText=fmt(PV); pvEl.classList.remove('positive','negative'); pvEl.classList.add(PV<0?'negative':'positive'); }
         else pvEl.innerText='—';
 
-        // 計算式
         const simpleEl=document.getElementById('simpleCalc');
         if(!Number.isFinite(PV)){ simpleEl.innerHTML='<span>PV = —</span>'; }
         else {
@@ -702,7 +654,8 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
           const slabel=isShort?'短收':'溢收', scolor=isShort?'#d63e3e':'#1a6fa8';
           const pvLabels=[
             {id:'pv_extend',name:'延長授權'},{id:'pv_pen',name:'智能筆'},{id:'pv_hdd',name:'2T硬碟'},
-            {id:'pv_hipass',name:'HIPASS'},{id:'pv_other3c',name:'其他3C'},{id:'pv_points',name:'好師到點數'},{id:'pv_nav',name:'選才導航'},
+            {id:'pv_hipass',name:'HIPASS'},{id:'pv_other3c',name:'其他3C'},{id:'pv_points',name:'好師到點數'},
+            {id:'pv_bookfee',name:'書籍費'},{id:'pv_nav',name:'選才導航'},
           ];
           let parts=[];
           if(A!==0)parts.push({v:A,l:'主產品PV',c:'#1a6fa8'});
@@ -717,14 +670,11 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
           simpleEl.innerHTML=`<span style="color:#5a7a8e">PV = </span>${html||'0'} <span style="color:#5a7a8e">= </span><span style="color:${eqC};font-size:17px;font-weight:800">${fmt(PV)}</span>`;
         }
 
-        // pvComposeNotice
         const diffXY=Number.isFinite(X)?X-Y:NaN, diffXZ=Number.isFinite(X)?X-Z:NaN;
         document.getElementById('pvComposeNotice')?.classList.toggle('hidden',!(Number.isFinite(diffXY)&&diffXY<0&&Number.isFinite(diffXZ)&&diffXZ<0));
 
-        // gift validate
-        ['pv_extend_gift','pv_pen_gift','pv_hdd_gift','pv_hipass_gift','pv_other3c_gift','pv_points_gift','pv_nav_gift'].forEach(validateGift);
+        ['pv_extend_gift','pv_pen_gift','pv_hdd_gift','pv_hipass_gift','pv_other3c_gift','pv_points_gift','pv_bookfee_gift','pv_nav_gift'].forEach(validateGift);
 
-        // has-value refresh
         document.querySelectorAll('.num-input').forEach(el=>{
           const n=parseInputToNumber(el.dataset.raw??'');
           el.classList.toggle('has-value',Number.isFinite(n)&&n!==0);
@@ -744,12 +694,10 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
       });
       autoFilledZ.clear(); manualClearedZ.clear();
       document.querySelectorAll('.auto-fill-badge').forEach(b=>b.classList.add('hidden'));
-      // 永遠鎖定的 PV 欄位
       ALWAYS_LOCKED_PV.forEach(id=>{ const el=document.getElementById(id);if(el){ el.disabled=true; el.setAttribute('tabindex','-1'); } });
       calculatePV();
     }
 
-    // placeholder 重設 helper
     function zEl_placeholder_reset(el, yVal, surplus){
       if(!el)return;
       if(surplus<=0||!Number.isFinite(yVal)||yVal===0){
@@ -769,19 +717,16 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
         const yVal=getN(yId);
 
         if(evt&&evt.type==='input'){
-          // 使用者正在打字：標記為非自動、移除自動樣式
           autoFilledZ.delete(zId);
           el.classList.remove('auto-filled');
           document.getElementById(zId+'_auto')?.classList.add('hidden');
 
           const currentRaw=(el.dataset.raw??'');
           if(currentRaw===''){
-            // 使用者清空 → 記錄為主動清空，重算讓後面項目有機會補上
             manualClearedZ.add(zId);
             el.classList.remove('surplus-warn'); el.placeholder='分配金額';
             calculatePV();
           } else {
-            // 使用者正在輸入數字中，先不驗證，等 blur
             manualClearedZ.delete(zId);
             el.classList.remove('surplus-warn');
             calculatePV();
@@ -789,20 +734,17 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
           return;
         }
 
-        // ── blur 處理 ──
         const val=parseInputToNumber(el.dataset.raw??'');
 
-        // 空白 blur → 維持清空狀態，重算
         if(!Number.isFinite(val)||val===0){
           el.dataset.raw=''; applyFmt(el);
           autoFilledZ.delete(zId);
-          manualClearedZ.add(zId); // 確保不被自動補回
+          manualClearedZ.add(zId);
           el.classList.remove('auto-filled','surplus-warn','invalid');
           el.placeholder='分配金額';
           calculatePV(); return;
         }
 
-        // 左欄無值 → 清除
         if(!Number.isFinite(yVal)||yVal===0){
           el.dataset.raw=''; applyFmt(el);
           autoFilledZ.delete(zId); manualClearedZ.delete(zId);
@@ -810,7 +752,6 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
           calculatePV(); return;
         }
 
-        // 值不等於左欄 → 靜默清除，標記主動清空
         if(val!==yVal){
           el.dataset.raw=''; applyFmt(el);
           autoFilledZ.delete(zId); manualClearedZ.add(zId);
@@ -819,9 +760,8 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
           calculatePV(); return;
         }
 
-        // 值等於左欄 → 檢查總額是否超過溢收
         const othersTotal=addonPairs.filter(p=>p.z!==zId).reduce((s,{z})=>s+(getN(z)??0),0);
-        if(surplus>0 && othersTotal+val>surplus){
+        if(othersTotal+val>surplus){
           el.dataset.raw=''; applyFmt(el);
           autoFilledZ.delete(zId); manualClearedZ.add(zId);
           el.classList.remove('auto-filled');
@@ -831,7 +771,6 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
           calculatePV(); return;
         }
 
-        // 通過：標記為手動填入（不在 autoFilledZ，也不在 manualClearedZ）
         autoFilledZ.delete(zId); manualClearedZ.delete(zId);
         el.classList.remove('invalid','surplus-warn'); el.placeholder='分配金額'; applyFmt(el);
         calculatePV();
@@ -845,19 +784,18 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
         el.addEventListener('input',e=>onZInput(z,e));
         el.addEventListener('blur', e=>onZInput(z,e));
       });
-      ['pv_extend_gift','pv_pen_gift','pv_hdd_gift','pv_hipass_gift','pv_other3c_gift','pv_points_gift','pv_nav_gift'].forEach(id=>{
+      ['pv_extend_gift','pv_pen_gift','pv_hdd_gift','pv_hipass_gift','pv_other3c_gift','pv_points_gift','pv_bookfee_gift','pv_nav_gift'].forEach(id=>{
         const el=document.getElementById(id); if(!el)return;
         el.addEventListener('blur',()=>{autoNeg(el);applyFmt(el);validateGift(id);calculatePV();});
         el.addEventListener('input',()=>validateGift(id));
         el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();autoNeg(el);applyFmt(el);validateGift(id);calculatePV();focusAdj(el,1);}});
       });
-      ['X','y_main','y_extend','y_otherfee','y_servicefee','A',
-       'pv_extend','pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points','pv_nav'].forEach(id=>{
+      ['X','y_main','y_extend','y_servicefee','A',
+       'pv_extend','pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points','pv_bookfee','pv_nav'].forEach(id=>{
         const el=document.getElementById(id);if(!el)return;
         el.addEventListener('input',calculatePV);el.addEventListener('blur',calculatePV);
       });
-      // pen/hdd/other3c/hipass/points/nav 標準定價欄
-      ['pen','hdd','other3c','hipass','points','nav'].forEach(id=>{
+      ['pen','hdd','other3c','hipass','points','bookfee','nav'].forEach(id=>{
         const el=document.getElementById(id);if(!el)return;
         el.addEventListener('input',calculatePV);el.addEventListener('blur',calculatePV);
       });
@@ -870,7 +808,6 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
 
 </div><!-- /page-wrap -->
 
-  <!-- ── 進度指示器 ── -->
   <div id="progress-bar-wrap">
     <div class="prog-steps">
       <div class="prog-step" id="prog-X"><div class="prog-dot"></div><div class="prog-label">X 訂單金額</div></div>
@@ -883,7 +820,6 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
     </div>
   </div>
 
-  <!-- ── Sticky bar ── -->
   <div id="sticky-result" class="sticky-hidden">
     <div class="sticky-inner">
       <div class="sticky-label">PV 結果</div>
@@ -908,11 +844,6 @@ const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv
     .prog-step.done .prog-label,.prog-step.active .prog-label { color:var(--accent-deep);font-weight:700; }
     .prog-line  { flex:1;height:2px;background:#d0e4f0;margin-bottom:18px;transition:background .3s;min-width:20px; }
     .prog-line.done { background:var(--c3); }
-    .collapsible-title{cursor:pointer;user-select:none;display:flex;align-items:center;gap:8px;}
-    .collapsible-title:hover{opacity:.85;}
-    .collapse-hint{font-size:11px;color:var(--text-muted);font-weight:400;}
-    .collapsible-content{overflow:hidden;transition:max-height .3s ease,opacity .3s ease;max-height:800px;opacity:1;}
-    .collapsible-content.collapsed{max-height:0;opacity:0;}
     #sticky-result{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,rgba(14,77,122,0.97),rgba(26,111,168,0.97));backdrop-filter:blur(10px);color:#fff;padding:10px 24px;box-shadow:0 -4px 20px rgba(14,77,122,0.25);z-index:200;transition:transform .3s ease;}
     #sticky-result.sticky-hidden{transform:translateY(100%);}
     .sticky-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
