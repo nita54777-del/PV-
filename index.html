@@ -76,7 +76,6 @@
     input.pv-gift-input.gift-has-value { border:2px solid var(--danger) !important; background:var(--danger-light); }
     input.pv-z-remind { border:2px solid #d97b3a !important; background:#fff8f3 !important; box-shadow:0 0 0 3px rgba(217,123,58,0.15) !important; animation:pulse-orange 1.6s ease-in-out infinite; }
     input.pv-z-remind::placeholder { color:#c0622a !important; font-weight:600; }
-    /* 新增：部分短收情境，右欄倒扣提示 */
     input.pv-deduct-remind { border:2px solid #d63e3e !important; background:#fff0f0 !important; box-shadow:0 0 0 3px rgba(214,62,62,0.15) !important; animation:pulse-red 1.6s ease-in-out infinite; }
     input.pv-deduct-remind::placeholder { color:#c0392b !important; font-weight:600; }
     @keyframes pulse-orange { 0%,100%{box-shadow:0 0 0 3px rgba(217,123,58,0.15);} 50%{box-shadow:0 0 0 6px rgba(217,123,58,0.08);} }
@@ -108,15 +107,12 @@
 
     .z-note { font-size:13px; color:var(--danger); font-weight:600; margin:10px 0 6px; background:var(--danger-light); border:1px solid var(--danger-border); border-radius:6px; padding:8px 12px; display:block; }
     .notice-box { padding:10px 14px; border-radius:var(--radius-sm); background:var(--danger-light); border:1.5px solid var(--danger-border); color:var(--danger); font-weight:600; font-size:14px; margin-top:10px; }
-    /* 新增：部分短收情境通知（橘色，與全鎖紅色區隔） */
     .notice-box.partial { background:#fff7ef; border-color:#f0c89a; color:#b5651d; }
 
-    /* 數量制：共N 下拉與驗證提示 */
     .qty-wrap { display:inline-flex; align-items:center; margin-left:6px; position:relative; }
     .qty-toggle { font-size:12px; font-weight:700; color:var(--accent); background:#eaf6fd; border:1.5px solid var(--c3); border-radius:14px; padding:3px 10px; cursor:pointer; user-select:none; white-space:nowrap; transition:all .15s; }
     .qty-wrap:hover .qty-toggle { background:var(--c2); }
     .qty-toggle.qty-multi { background:linear-gradient(135deg,var(--c3),var(--c4)); color:var(--accent-deep); border-color:var(--accent); }
-    /* select 透明覆蓋整顆膠囊：點膠囊即點下拉 */
     .qty-select { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; font-size:16px; }
     .recv-input { width:140px; }
     .item-err { display:block; font-size:11.5px; font-weight:600; color:var(--danger); background:var(--danger-light); border:1px solid var(--danger-border); border-radius:5px; padding:4px 9px; margin:3px 0 2px; line-height:1.5; }
@@ -124,7 +120,6 @@
     .extend-recv-row { display:flex; align-items:center; gap:8px; margin:7px 0; flex-wrap:wrap; }
     .extend-recv-row label { width:220px; }
     input.recv-multiple-err { border:2px solid var(--danger) !important; background:var(--danger-light) !important; box-shadow:0 0 0 3px rgba(214,62,62,0.12) !important; }
-    /* 數量1專用：延長授權贈送勾選與備註 */
     .extend-gift-box { margin:4px 0 8px 0; padding:10px 14px; background:#f0fbf4; border:1.5px solid #a8e6c3; border-radius:var(--radius-sm); }
     .extend-gift-label { display:flex; align-items:center; gap:8px; cursor:pointer; width:auto; font-size:13.5px; font-weight:600; color:#1e8a4c; line-height:1.5; }
     .extend-gift-label input[type="checkbox"] { width:18px; height:18px; flex-shrink:0; accent-color:#27ae60; cursor:pointer; margin:0; }
@@ -214,10 +209,10 @@
     <div class="sub-block" id="addon-block">
       <div class="sub-block-title">
         加購項目
-        <span style="font-weight:400;color:var(--text-muted);font-size:12px;margin-left:4px;">X 大於主產品時開放填寫</span>
+        <span style="font-weight:400;color:var(--text-muted);font-size:12px;margin-left:4px;">主產品有值即可填標準定價</span>
       </div>
       <div class="block-hint">
-        左欄填標準定價；右欄為實際溢收分配金額，有溢收時自動帶入（<span style="color:#27ae60;font-weight:700">綠框</span>），溢收不足時橘紅提示仍可手動填寫。
+        左欄填標準定價；右欄為實際溢收分配金額，有溢收時自動帶入（<span style="color:#27ae60;font-weight:700">綠框</span>）。短收或無溢收時項目視為贈送，請於 B-PV 右欄扣除對應 PV。
       </div>
       <div class="z-note">▶ 若溢收金額不足加購項目優惠價，則依實際溢收金額換算 PV；請在 B-PV 小計下方扣除對應 PV。</div>
 
@@ -293,17 +288,18 @@
       <div class="item-info hidden" id="info_nav"></div>
 
       <div id="addon-surplus-info" class="addon-surplus-info hidden">
-        <span class="muted">溢收（X − Z）：</span>
+        <span class="muted">溢收（X−主產品−手續費）：</span>
         <span id="surplus_amount" class="value positive" style="font-size:14px;min-width:80px;"></span>
+        <span class="muted" style="margin-left:12px;" id="ext_bought_label">延長授權購買：</span>
+        <span id="ext_bought_amount" class="value positive" style="font-size:14px;min-width:80px;"></span>
         <span class="muted" style="margin-left:12px;">加購小計：</span>
         <span id="Z_addons_value" class="value positive" style="font-size:14px;min-width:80px;"></span>
-        <span class="muted" style="margin-left:12px;">▶ 換算 PV 值：</span>
+        <span class="muted" style="margin-left:12px;">▶ 剩餘換算 PV：</span>
         <span id="surplus_remaining" class="value positive" style="font-size:14px;min-width:80px;"></span>
       </div>
     </div>
 
     <div id="yMainShortfallNotice" class="notice-box hidden" role="alert" aria-live="assertive"></div>
-    <!-- 新增：部分短收情境通知 -->
     <div id="partialShortNotice" class="notice-box partial hidden" role="alert" aria-live="polite"></div>
   </div>
 
@@ -331,7 +327,7 @@
 
     <div class="sub-block">
       <div class="sub-block-title">B — PV 小計</div>
-      <div class="block-hint">左側填客戶購買 PV；右側填贈送需扣除 PV（請輸入負數）。</div>
+      <div class="block-hint">左側填客戶購買 PV；右側填贈送需扣除 PV（請輸入負數）。<span style="color:#c0392b;font-weight:700">紅框</span>表示該項為贈送／未收足，請填入扣除 PV。</div>
 
       <div class="pv-col-header">
         <div class="pv-label"></div>
@@ -372,7 +368,6 @@
       <pre id="calcDisplay"></pre>
     </div>
   </div>
-
   <script>
     const nf = new Intl.NumberFormat('zh-TW');
 
@@ -460,17 +455,13 @@
 
     function computeZBase(){
       const ym=getN('y_main')??0, ys=getN('y_servicefee')??0;
-      const yeStd=getN('y_extend')??0;            // 標準價全額
+      const yeStd=getN('y_extend')??0;
       let yeBase=yeStd;
       const qExt=(typeof qtyState!=='undefined')?(qtyState.extend||1):1;
       if(qExt>1){
-        // 數量≥2：用實收（購買部分）；空白/0 → 全贈，購買=0
         const recvRaw=document.getElementById('recv_extend')?.dataset.raw??'';
         if(recvRaw===''){ yeBase=0; }
         else { const recv=parseInputToNumber(recvRaw); yeBase=Number.isFinite(recv)?recv:0; }
-      } else {
-        // 數量1：若贈送勾選生效 → 移出基準（購買=0）
-        if(_extGift1Active) yeBase=0;
       }
       return {y_main:ym, y_extend:yeStd, y_extend_base:yeBase, y_servicefee:ys, Z:ym+yeBase+ys};
     }
@@ -485,9 +476,6 @@
       {y:'nav',     z:'z_nav'    },
     ];
 
-    // ───── 數量制 ─────
-    // 8 個項目：target → {total:標準價欄id, recv:實收欄id}
-    // 加購 7 項的實收欄沿用既有 z_xxx；延長授權用獨立 recv_extend
     const QTY_ITEMS = {
       extend:  { total:'y_extend',  recv:'recv_extend', name:'延長授權' },
       pen:     { total:'pen',       recv:'z_pen',       name:'智能筆'   },
@@ -499,12 +487,9 @@
       nav:     { total:'nav',       recv:'z_nav',       name:'選才導航' },
     };
     const QTY_MAX = 10;
-    // 各項目目前選的數量（預設 1）
     const qtyState = {};
     Object.keys(QTY_ITEMS).forEach(k=>qtyState[k]=1);
 
-    // 單一項目的數量制計算（純函式，不碰 DOM）
-    // 回傳 {valid, error, unit, paidUnits, giftUnits, giftAmount, total, qty, received}
     function qtyItemCompute(target){
       const cfg=QTY_ITEMS[target];
       const total=getN(cfg.total);
@@ -516,7 +501,6 @@
       if(!Number.isFinite(total)||total<=0){ r.valid=false; r.error='no-total'; return r; }
       if(qty>1 && total%qty!==0){ r.valid=false; r.error='not-divisible'; return r; }
       const unit=total/qty; r.unit=unit;
-      // 未填的語意：數量≥2 時，實收空白一律 = 全贈（received=0）。右邊有金額才算購買。
       if(!recvFilled){ received=0; r.received=0; }
       if(!Number.isFinite(received)){ r.valid=false; r.error='no-total'; return r; }
       if(received>total){ r.valid=false; r.error='exceed'; return r; }
@@ -528,7 +512,6 @@
       return r;
     }
 
-    // 建立數量下拉選項
     function buildQtySelectors(){
       Object.keys(QTY_ITEMS).forEach(target=>{
         const sel=document.getElementById('qty_sel_'+target);
@@ -543,12 +526,10 @@
       });
     }
 
-    // 更新「共N」標記文字與實收列顯示（select 直接疊在膠囊上，點膠囊即開下拉）
     function refreshQtyUI(target){
       const tog=document.getElementById('qty_toggle_'+target);
       const qty=qtyState[target]||1;
       if(tog){ tog.textContent='共'+qty; tog.classList.toggle('qty-multi', qty>1); }
-      // 延長授權的實收列：數量>1 或已填實收時顯示
       if(target==='extend'){
         const row=document.getElementById('recv_row_extend');
         const recvHas=(document.getElementById('recv_extend')?.dataset.raw??'')!=='';
@@ -556,14 +537,9 @@
       }
     }
 
-
     const ALWAYS_LOCKED_PV = new Set(['pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points','pv_bookfee']);
-
-    // 新增：部分短收情境（Z<=X<Y）時，B 區左欄要鎖死的所有加購 PV（含 pv_nav）
     const ADDON_PV_LEFT = ['pv_pen','pv_hdd','pv_other3c','pv_hipass','pv_points','pv_bookfee','pv_nav'];
-    // 對應右欄 gift
     const ADDON_PV_GIFT = ADDON_PV_LEFT.map(id=>id+'_gift');
-    // PV 左欄 → 對應「標準定價欄(y)」的對照，用於判斷該項是否實際有填標準價
     const PV_LEFT_TO_Y = {
       pv_pen:'pen', pv_hdd:'hdd', pv_other3c:'other3c', pv_hipass:'hipass',
       pv_points:'points', pv_bookfee:'bookfee', pv_nav:'nav'
@@ -571,50 +547,7 @@
 
     const autoFilledZ = new Set();
     const manualClearedZ = new Set();
-
-    // 全域狀態旗標，供其他函式判斷
     let _partialShort = false;
-
-    function autoFillZ(surplus){
-      let remaining = surplus;
-      addonPairs.forEach(({y,z})=>{
-        const yVal=getN(y); const zEl=document.getElementById(z); const badge=document.getElementById(z+'_auto');
-        if(!zEl) return;
-        const zRaw=zEl.dataset.raw??''; const zVal=parseInputToNumber(zRaw);
-        const isManual=!autoFilledZ.has(z)&&zRaw!=='';
-
-        if(!Number.isFinite(yVal)||yVal===0){
-          if(autoFilledZ.has(z)){
-            autoFilledZ.delete(z); zEl.dataset.raw=''; applyFmt(zEl);
-            zEl.classList.remove('auto-filled','surplus-warn'); if(badge)badge.classList.add('hidden');
-          }
-          return;
-        }
-        if(isManual){
-          if(Number.isFinite(zVal)&&zVal>0) remaining-=zVal;
-          return;
-        }
-        if(manualClearedZ.has(z)) return;
-
-        if(autoFilledZ.has(z)&&Number.isFinite(zVal)&&zVal>0) remaining+=zVal;
-
-        if(remaining<=0||yVal>remaining){
-          if(autoFilledZ.has(z)){
-            autoFilledZ.delete(z); zEl.dataset.raw=''; applyFmt(zEl);
-            zEl.classList.remove('auto-filled'); if(badge)badge.classList.add('hidden');
-          }
-          if(!zEl.disabled){ zEl.classList.add('surplus-warn'); zEl.placeholder='溢收不足加購 → 扣PV'; }
-          return;
-        }
-
-        autoFilledZ.add(z);
-        zEl.dataset.raw=String(yVal); applyFmt(zEl);
-        zEl.classList.add('auto-filled'); zEl.classList.remove('surplus-warn');
-        zEl.placeholder='分配金額';
-        if(badge)badge.classList.remove('hidden');
-        remaining-=yVal;
-      });
-    }
 
     function clearAutoFilled(){
       autoFilledZ.forEach(z=>{
@@ -645,7 +578,8 @@
     function autoNeg(el){ if(!el)return; const n=parseInputToNumber(el.dataset.raw??''); if(Number.isFinite(n)&&n>0)el.dataset.raw=String(-n); }
 
     function lockWhenShort(shouldLock,X,yMainVal,shortBase){
-      const toLock=['y_extend','pen','hdd','other3c','hipass','points','bookfee','nav','z_pen','z_hdd','z_other3c','z_hipass','z_points','z_bookfee','z_nav','pv_extend','pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points','pv_bookfee','pv_nav'];
+      // 短收時：加購「標準定價」欄仍開放（左欄可填，視為贈送）；僅鎖分配欄與 B 左欄
+      const toLock=['y_extend','z_pen','z_hdd','z_other3c','z_hipass','z_points','z_bookfee','z_nav','pv_extend','pv_pen','pv_hdd','pv_hipass','pv_other3c','pv_points','pv_bookfee','pv_nav'];
       toLock.forEach(id=>{
         const el=document.getElementById(id); if(!el)return;
         if(shouldLock){ el.disabled=true; el.dataset.raw=''; applyFmt(el); }
@@ -657,66 +591,20 @@
       if(!notice)return;
       if(shouldLock&&Number.isFinite(X)&&Number.isFinite(shortBase)){
         const short=Math.max(0,shortBase-X);
-        const sf=getN('y_servicefee')??0;
         let msg=`因實際銷售金額低於「主產品＋手續費」基準（${fmt(shortBase)}），短收 (${fmt(short)})。`;
-        msg+=' 因此無法新增其他加購項目，請確認訂單金額是否正確。';
+        msg+=' 加購項目視為贈送：可填標準定價後，於 B-PV 右側紅框欄位填入扣除 PV。';
         notice.innerText=msg; notice.classList.remove('hidden');
       } else { notice.innerText=''; notice.classList.add('hidden'); }
     }
 
-    // ── 新增：部分短收（Z<=X<Y）情境的鎖定與提示處理 ──
-    function applyPartialShort(active, X, Z, Y){
-      _partialShort = active;
-      const notice=document.getElementById('partialShortNotice');
-
-      // B 區左欄加購 PV：active 時全部鎖死清空；非 active 時交還給原本邏輯（不在此強制解鎖）
-      ADDON_PV_LEFT.forEach(id=>{
-        const el=document.getElementById(id); if(!el)return;
-        if(active){
-          el.disabled=true; el.dataset.raw=''; applyFmt(el);
-          el.classList.remove('pv-remind');
-        }
-      });
-
-      // 右欄 gift：active 時，僅對「左欄標準定價有填、卻因溢收不足未被分配」的項目亮提醒
-      ADDON_PV_GIFT.forEach(id=>{
-        const el=document.getElementById(id); if(!el)return;
-        const leftId=id.replace(/_gift$/,'');      // pv_xxx
-        const yId=PV_LEFT_TO_Y[leftId];            // 對應標準價欄
-        const yHas = yId ? ((document.getElementById(yId)?.dataset.raw??'')!=='') : false;
-        if(active && yHas){
-          const hasVal=(el.dataset.raw??'')!=='';
-          if(!hasVal){ el.classList.add('pv-deduct-remind'); el.placeholder='此項未收足 → 請填扣除 PV'; }
-          else { el.classList.remove('pv-deduct-remind'); el.placeholder='贈送請填扣除 PV'; }
-        } else {
-          el.classList.remove('pv-deduct-remind'); el.placeholder='贈送請填扣除 PV';
-        }
-      });
-
-      if(!notice)return;
-      if(active){
-        const surplus=Math.max(0,X-Z);
-        const pvSurplus=floorHundred(surplus);
-        let msg=`實際銷售總額（${fmt(X)}）低於產品應付總額（${fmt(Y)}），但高於萬事通系列標準價（${fmt(Z)}）。`;
-        msg+=` 業績以萬事通標準價為基準，溢收 ${fmt(surplus)} 換算 PV 為 ${fmt(pvSurplus)}。`;
-        msg+=` 加購項目（3C／講義／服務）未收足，左側 PV 已鎖定，請在右側「扣除 PV」欄填入負數倒扣對應 PV。`;
-        notice.innerText=msg; notice.classList.remove('hidden');
-      } else {
-        notice.innerText=''; notice.classList.add('hidden');
-      }
-    }
-
-    // target → B 區右欄 gift 欄位 id（延長授權與 7 加購）
     const QTY_TO_PVGIFT = {
       extend:'pv_extend_gift', pen:'pv_pen_gift', hdd:'pv_hdd_gift',
       other3c:'pv_other3c_gift', hipass:'pv_hipass_gift', points:'pv_points_gift',
       bookfee:'pv_bookfee_gift', nav:'pv_nav_gift'
     };
 
-    // 數量制：逐項驗證並顯示提示。數量=1 完全不介入。
     function processQtyItems(){
       Object.keys(QTY_ITEMS).forEach(target=>{
-        // 延長授權（extend）改由新模型 showExtendInfo 處理，這裡跳過
         if(target==='extend') return;
         const cfg=QTY_ITEMS[target];
         const qty=qtyState[target]||1;
@@ -730,7 +618,6 @@
           if(recvEl)recvEl.classList.remove('recv-multiple-err');
         };
 
-        // 數量=1：不介入
         if(qty<=1){ clearMsgs(); return; }
 
         const total=getN(cfg.total);
@@ -752,7 +639,6 @@
           return;
         }
 
-        // 有效：顯示單價與買送拆解
         if(r.giftUnits>0){
           if(infoEl){
             if(r.paidUnits===0){
@@ -777,8 +663,6 @@
       });
     }
 
-    // ═══════════ 新模型核心計算引擎 ═══════════
-    // 基準 = 主產品；手續費、延長授權為溢收自動扣抵項
     function computeModel(){
       const X=parseInputToNumber(document.getElementById('X').dataset.raw??'');
       const mainAmt=getN('y_main')??0;
@@ -794,7 +678,9 @@
         addonAlloc:{}, surplusFinal:0, surplusPV:0 };
       if(!Number.isFinite(X)||mainAmt<=0){ R.valid=false; return R; }
 
-      if(X < R.shortBase){ R.mode='short'; R.short=X-R.shortBase; return R; }
+      if(X < R.shortBase){ R.mode='short'; R.short=X-R.shortBase;
+        addonPairs.forEach(({y})=>{ R.addonAlloc[y]=0; });
+        return R; }
       R.feePaid=true;
       let surplus=X - mainAmt - svcFee;
 
@@ -806,38 +692,32 @@
           addonPairs.forEach(({y})=>{ R.addonAlloc[y]=0; });
           return R;
         } else {
-          // 溢收買得起的上限次數
           const maxBySurplus=Math.min(extQty, Math.floor(surplus/extUnit));
-          // 讀延長授權實收欄（手動覆寫）：換算成次數，不超過上限
           const recvRaw=document.getElementById('recv_extend')?.dataset.raw??'';
-          let boughtUnits=maxBySurplus;   // 預設=系統自動買最多
+          let boughtUnits=maxBySurplus;
           if(recvRaw!==''){
             const recv=parseInputToNumber(recvRaw);
             if(Number.isFinite(recv)&&recv>=0){
               let units=Math.round(recv/extUnit);
               if(units<0)units=0;
-              if(units>maxBySurplus)units=maxBySurplus;   // 超過上限 → 修正
+              if(units>maxBySurplus)units=maxBySurplus;
               boughtUnits=units;
             }
           }
           R.extBought=boughtUnits; R.extGift=extQty-boughtUnits;
           surplus-=boughtUnits*extUnit;
-          R.extMaxBySurplus=maxBySurplus;   // 供 UI 顯示上限
+          R.extMaxBySurplus=maxBySurplus;
         }
       } else { R.extBought=0; R.extGift=0; }
 
       addonPairs.forEach(({y,z})=>{
         const total=getN(y)??0;
-        // 手動放棄分配（清空右欄）的項目跳過，溢收讓給後面
         if(manualClearedZ.has(z)){ R.addonAlloc[y]=0; return; }
         if(!(total>0)){ R.addonAlloc[y]=0; return; }
-        // 逐個買：單價 = 總額 ÷ 數量（數量1即整筆）
         const q=qtyState[y]||1;
-        const unit=(q>1 && total%q===0)?(total/q):total;   // 不能整除時退回整筆邏輯
-        // 溢收買得起的上限個數
+        const unit=(q>1 && total%q===0)?(total/q):total;
         const maxUnits=Math.min(q, Math.floor(surplus/unit));
-        let buyUnits=maxUnits;                              // 預設自動買最多
-        // 手動覆寫：右欄已有手填值（非自動帶入）且為單價整數倍、不超上限 → 採用
+        let buyUnits=maxUnits;
         const zEl=document.getElementById(z);
         const zRaw=zEl?.dataset.raw??'';
         if(zRaw!=='' && !autoFilledZ.has(z)){
@@ -856,7 +736,6 @@
       return R;
     }
 
-    // 通知框：短收 / 純溢收模式提示
     function showModelNotice(M){
       const notice=document.getElementById('partialShortNotice');
       if(!notice)return;
@@ -868,7 +747,6 @@
         notice.classList.remove('hidden');
       } else { notice.innerText=''; notice.classList.add('hidden'); }
     }
-
     function calculatePV(){
       try{
         const M=computeModel();
@@ -885,11 +763,13 @@
         const shouldLock = M.mode==='short';
         lockWhenShort(shouldLock, X, yMainVal, M.shortBase);
 
+        // 加購「標準定價」欄：只要主產品有值就開放（短收也可填→視為贈送）
+        const addonOpen = M.valid && yMainVal>0;
         const xGtBase = M.valid && !shouldLock && X > M.shortBase;
         addonPairs.forEach(({y})=>{
           const el=document.getElementById(y); if(!el)return;
-          if(!shouldLock) el.disabled=!xGtBase;
-          if(!xGtBase){ el.dataset.raw=''; applyFmt(el); }
+          el.disabled=!addonOpen;
+          if(!addonOpen){ el.dataset.raw=''; applyFmt(el); }
           const hasVal=(el.dataset.raw??'')!=='';
           if(xGtBase&&!hasVal){ el.placeholder='若訂單有出現則需要填上金額'; el.classList.add('placeholder-warn'); }
           else { el.placeholder='標準定價'; el.classList.remove('placeholder-warn'); }
@@ -909,15 +789,31 @@
         const hasSurplus=M.valid&&!shouldLock&&surplus>0;
         document.getElementById('addon-surplus-info').classList.toggle('hidden',!hasSurplus);
         setTxt('surplus_amount',surplus);
+        // 顯示延長授權購買金額（讓使用者看懂溢收流向）
+        setTxt('ext_bought_amount', extBoughtAmt);
+        const extLbl=document.getElementById('ext_bought_label');
+        const extAmtEl=document.getElementById('ext_bought_amount');
+        const showExt=extBoughtAmt>0;
+        if(extLbl)extLbl.classList.toggle('hidden',!showExt);
+        if(extAmtEl)extAmtEl.classList.toggle('hidden',!showExt);
 
-        // 加購分配欄：依 addonAlloc 自動帶入 / 標示贈送
+        // 加購分配欄（右欄）：無溢收或短收時鎖定為贈送，並提示
         addonPairs.forEach(({y,z})=>{
           const zEl=document.getElementById(z); if(!zEl)return;
           const total=getN(y)??0; const yHas=total>0;
-          if(shouldLock) return;
-          zEl.disabled=!(yHas&&xGtBase);
           const alloc=M.addonAlloc[y]??0;
           const b=document.getElementById(z+'_auto');
+          if(shouldLock || !hasSurplus){
+            // 短收 / 無溢收：分配欄鎖定，若左欄有值 → 標為贈送提示
+            zEl.disabled=true;
+            zEl.dataset.raw=''; applyFmt(zEl); autoFilledZ.delete(z);
+            zEl.classList.remove('auto-filled');
+            if(yHas){ zEl.classList.add('surplus-warn'); zEl.placeholder='贈送 → 請於B-PV右欄扣PV'; }
+            else { zEl.classList.remove('surplus-warn'); zEl.placeholder='分配金額'; }
+            if(b)b.classList.add('hidden');
+            return;
+          }
+          zEl.disabled=!(yHas&&xGtBase);
           if(!yHas||!xGtBase){
             zEl.dataset.raw=''; applyFmt(zEl); autoFilledZ.delete(z);
             zEl.classList.remove('auto-filled','surplus-warn'); zEl.placeholder='分配金額';
@@ -927,7 +823,6 @@
             zEl.classList.remove('auto-filled'); zEl.classList.add('surplus-warn');
             zEl.placeholder='延長授權買不起→贈送'; if(b)b.classList.add('hidden');
           } else if(manualClearedZ.has(z)){
-            // 手動放棄分配 → 當贈送，不自動帶回（可隨時手動填回）
             autoFilledZ.delete(z);
             zEl.classList.remove('auto-filled'); zEl.classList.add('surplus-warn');
             zEl.placeholder='已改為贈送 → 扣PV'; if(b)b.classList.add('hidden');
@@ -948,7 +843,6 @@
         processQtyItems();
         showModelNotice(M);
 
-        // ── 延長授權實收欄：超上限修正 + 綠色 info 顯示買送（數量≥2）──
         (function(){
           const recvEl=document.getElementById('recv_extend');
           const errEl=document.getElementById('err_extend');
@@ -959,7 +853,6 @@
             if(infoEl){infoEl.classList.add('hidden');infoEl.innerText='';}
           };
           if(!(M.valid && !shouldLock && M.extStd>0)){ clear(); return; }
-          // 數量1：只有「買不起→全贈」才提示；買得起不提示
           if(M.extQty<=1){
             if(M.extPure){
               if(errEl){errEl.classList.add('hidden');}
@@ -975,7 +868,6 @@
             return;
           }
 
-          // 純溢收模式（1 次都買不起 → 全贈）：鎖住並清空實收欄
           if(M.extPure){
             if(recvEl){ recvEl.disabled=true; recvEl.dataset.raw=''; applyFmt(recvEl); recvEl.placeholder='都買不起，無法填實收'; }
             if(errEl){errEl.classList.add('hidden');}
@@ -986,13 +878,11 @@
             if(giftEl){ giftEl.classList.add('pv-deduct-remind'); const has=(giftEl.dataset.raw??'')!==''; if(!has)giftEl.placeholder=`贈送 ${M.extQty} 次 → 請填扣除 PV`; }
             return;
           }
-          // 買得起至少 1 次：實收欄解鎖
           if(recvEl && recvEl.disabled){ recvEl.disabled=false; recvEl.placeholder='未填＝全收'; }
 
           const maxAmt=(M.extMaxBySurplus||0)*M.extUnit;
           const recvRaw=recvEl?.dataset.raw??'';
           const recvNum=parseInputToNumber(recvRaw);
-          // 超上限 → 自動修正
           if(recvRaw!==''&&Number.isFinite(recvNum)&&recvNum>maxAmt){
             recvEl.dataset.raw=String(maxAmt); applyFmt(recvEl);
             if(errEl){errEl.innerText=`溢收只夠購買 ${M.extMaxBySurplus} 次（${fmt(maxAmt)}），已自動修正。`;errEl.classList.remove('hidden');}
@@ -1000,7 +890,6 @@
 
           if(recvRaw===''&&recvEl){ recvEl.placeholder=`未填＝自動買 ${M.extMaxBySurplus} 次`; }
 
-          // 綠色 info：顯示買送次數
           if(infoEl){
             if(M.extGift>0){
               infoEl.innerText=`單價 ${fmt(M.extUnit)}　購買 ${M.extBought} 次、贈送 ${M.extGift} 次（贈送 ${fmt(M.extGift*M.extUnit)}）→ 請於 B-PV 右欄扣除贈送對應 PV。`;
@@ -1010,7 +899,6 @@
               infoEl.classList.remove('hidden');
             } else { infoEl.classList.add('hidden'); }
           }
-          // B-PV 右欄贈送提醒
           if(giftEl){
             if(M.extGift>0){ giftEl.classList.add('pv-deduct-remind'); const has=(giftEl.dataset.raw??'')!==''; if(!has)giftEl.placeholder=`贈送 ${M.extGift} 次 → 請填扣除 PV`; }
             else { giftEl.classList.remove('pv-deduct-remind'); }
@@ -1019,16 +907,15 @@
 
         const A=getN('A')??0;
 
-        // B 區左右欄鎖定
         const pvExtL=document.getElementById('pv_extend'), pvExtR=document.getElementById('pv_extend_gift');
         const yExtHas=M.extStd!==0;
-        const extAllGift = yExtHas && M.extBought===0;   // 延長授權完全沒買到 = 全贈
+        const extAllGift = yExtHas && M.extBought===0;
         if(extAllGift){
           if(pvExtL){ pvExtL.disabled=true; pvExtL.dataset.raw=''; applyFmt(pvExtL); pvExtL.classList.remove('pv-remind'); }
-          if(pvExtR){ pvExtR.disabled=false; pvExtR.classList.remove('pv-z-remind'); pvExtR.placeholder='全部贈送 → 請填扣除 PV'; }
+          if(pvExtR){ pvExtR.disabled=false; pvExtR.classList.add('pv-deduct-remind'); const has=(pvExtR.dataset.raw??'')!==''; if(!has)pvExtR.placeholder='全部贈送 → 請填扣除 PV'; }
         } else {
           if(pvExtL&&!shouldLock){ pvExtL.disabled=!yExtHas; if(!yExtHas){pvExtL.dataset.raw='';applyFmt(pvExtL);} }
-          if(pvExtR){ pvExtR.disabled=false; pvExtR.classList.remove('pv-z-remind'); pvExtR.placeholder='贈送請填扣除 PV'; }
+          if(pvExtR){ pvExtR.disabled=false; if(M.extGift<=0){pvExtR.classList.remove('pv-deduct-remind'); pvExtR.placeholder='贈送請填扣除 PV';} }
           if(pvExtL){ const hv=(pvExtL.dataset.raw??'')!==''; if(yExtHas&&!hv&&!pvExtL.disabled)pvExtL.classList.add('pv-remind'); else pvExtL.classList.remove('pv-remind'); }
         }
 
@@ -1047,14 +934,13 @@
           if(!leftEl||!rightEl)return;
           const yHas=total>0;
           const alloc=M.addonAlloc[y]??0;
-          const bought = !M.extPure && alloc>0;   // 有分配到=購買
+          const bought = !M.extPure && !shouldLock && alloc>0;
           rightEl.disabled=false;
           if(!yHas){
             leftEl.disabled=true; leftEl.dataset.raw=''; applyFmt(leftEl);
             leftEl.classList.remove('pv-remind');
-            rightEl.classList.remove('pv-z-remind'); rightEl.placeholder='贈送請填扣除 PV';
+            rightEl.classList.remove('pv-z-remind','pv-deduct-remind'); rightEl.placeholder='贈送請填扣除 PV';
           } else if(bought){
-            // 購買：左欄可填購買 PV，空著時亮提醒（含部分購買個數提示）
             if(!shouldLock)leftEl.disabled=false;
             const q=qtyState[y]||1;
             const unit=(q>1&&total%q===0)?(total/q):total;
@@ -1067,13 +953,22 @@
             } else {
               leftEl.classList.remove('pv-remind');
             }
-            rightEl.classList.remove('pv-z-remind');
-            rightEl.placeholder=partial?`贈送 ${q-units} 個 → 請填扣除 PV`:'贈送請填扣除 PV';
+            if(partial){
+              rightEl.classList.add('pv-deduct-remind');
+              const has=(rightEl.dataset.raw??'')!=='';
+              if(!has)rightEl.placeholder=`贈送 ${q-units} 個 → 請填扣除 PV`;
+            } else {
+              rightEl.classList.remove('pv-z-remind','pv-deduct-remind');
+              rightEl.placeholder='贈送請填扣除 PV';
+            }
           } else {
-            // 未收足 / 純溢收贈送：左欄鎖，右欄提示扣 PV
+            // 未收足 / 短收 / 無溢收 / 純溢收贈送：左欄鎖，右欄紅框明顯提示扣 PV
             leftEl.disabled=true; leftEl.dataset.raw=''; applyFmt(leftEl);
             leftEl.classList.remove('pv-remind');
-            rightEl.classList.add('pv-z-remind'); rightEl.placeholder='未收足→請填扣除 PV';
+            rightEl.classList.remove('pv-z-remind');
+            rightEl.classList.add('pv-deduct-remind');
+            const has=(rightEl.dataset.raw??'')!=='';
+            if(!has)rightEl.placeholder='贈送/未收足 → 請填扣除 PV';
           }
         });
 
@@ -1125,19 +1020,32 @@
       }catch(err){console.error(err);}
     }
 
-
+    let _resetArmed = false;
+    let _resetTimer = null;
     function resetAll(){
-      if(!confirm('確定要清空所有欄位嗎？'))return;
+      const btn = document.querySelector('.reset-btn');
+      if(!_resetArmed){
+        _resetArmed = true;
+        if(btn){ btn.innerHTML = '⚠️ 再按一次確認清空'; btn.style.background = '#fff0f0'; btn.style.borderColor = '#d63e3e'; }
+        clearTimeout(_resetTimer);
+        _resetTimer = setTimeout(()=>{
+          _resetArmed = false;
+          if(btn){ btn.innerHTML = '🗑 清空全部'; btn.style.background = ''; btn.style.borderColor = ''; }
+        }, 3000);
+        return;
+      }
+      _resetArmed = false;
+      clearTimeout(_resetTimer);
+      if(btn){ btn.innerHTML = '🗑 清空全部'; btn.style.background = ''; btn.style.borderColor = ''; }
       document.querySelectorAll('.num-input').forEach(el=>{
         el.dataset.raw=''; el.value='';
-        el.classList.remove('has-value','negative','invalid','auto-filled','pv-remind','placeholder-warn','pv-z-remind','gift-has-value','surplus-warn','pv-deduct-remind');
+        el.classList.remove('has-value','negative','invalid','auto-filled','pv-remind','placeholder-warn','pv-z-remind','gift-has-value','surplus-warn','pv-deduct-remind','recv-multiple-err');
         el.disabled=false; el.placeholder='';
       });
       autoFilledZ.clear(); manualClearedZ.clear();
       _partialShort=false;
       document.getElementById('partialShortNotice')?.classList.add('hidden');
       document.querySelectorAll('.auto-fill-badge').forEach(b=>b.classList.add('hidden'));
-      // 重置數量制
       Object.keys(QTY_ITEMS).forEach(target=>{
         qtyState[target]=1;
         const sel=document.getElementById('qty_sel_'+target); if(sel){sel.value='1';}
@@ -1145,7 +1053,6 @@
         document.getElementById('info_'+target)?.classList.add('hidden');
         refreshQtyUI(target);
       });
-      document.getElementById('recv_extend')?.classList.remove('recv-multiple-err');
       document.getElementById('recv_row_extend')?.classList.add('hidden');
       ALWAYS_LOCKED_PV.forEach(id=>{ const el=document.getElementById(id);if(el){ el.disabled=true; el.setAttribute('tabindex','-1'); } });
       calculatePV();
@@ -1162,11 +1069,9 @@
 
     function onZInput(zId,evt){
       try{
-        // 部分短收狀態下分配欄已鎖死，直接忽略
         if(_partialShort) return;
         const el=document.getElementById(zId); if(!el)return;
         const X=parseInputToNumber(document.getElementById('X').dataset.raw??'');
-        // 新模型口徑：可用溢收 = X - 主產品 - 手續費 - 延長授權購買
         const Mz=computeModel();
         const surplus=Math.max(0, Mz.valid&&Mz.mode!=='short'
           ? (X - Mz.mainAmt - Mz.svcFee - Mz.extBought*Mz.extUnit) : 0);
@@ -1209,26 +1114,21 @@
           calculatePV(); return;
         }
 
-        // 找出此 z 欄對應的數量制 target 與數量
         const qtyTarget=Object.keys(QTY_ITEMS).find(k=>QTY_ITEMS[k].recv===zId);
         const qtyN=qtyTarget?(qtyState[qtyTarget]||1):1;
 
         if(qtyN>1){
-          // ── 數量制：實收須為單價整數倍、不超過總額、不超過可用溢收 ──
           const unit=yVal/qtyN;
           if(yVal%qtyN!==0){
-            // 標準價不能整除數量：交由 processQtyItems 顯示錯誤，這裡保留輸入不清空
             manualClearedZ.delete(zId); el.classList.remove('auto-filled');
             calculatePV(); return;
           }
           if(val>yVal || val%unit!==0){
-            // 非整數倍或超過總額 → 清空
             el.dataset.raw=''; applyFmt(el);
             autoFilledZ.delete(zId); manualClearedZ.add(zId);
             el.classList.remove('auto-filled');
             calculatePV(); return;
           }
-          // 不超過可用溢收檢查
           const othersTotalQ=addonPairs.filter(p=>p.z!==zId).reduce((s,{z})=>s+(getN(z)??0),0);
           if(othersTotalQ+val>surplus){
             el.dataset.raw=''; applyFmt(el);
@@ -1244,7 +1144,6 @@
           calculatePV(); return;
         }
 
-        // ── 數量=1：維持原本「實收須等於標準價」規則 ──
         if(val!==yVal){
           el.dataset.raw=''; applyFmt(el);
           autoFilledZ.delete(zId); manualClearedZ.add(zId);
@@ -1294,7 +1193,6 @@
       });
       ALWAYS_LOCKED_PV.forEach(id=>{ const el=document.getElementById(id);if(el){ el.disabled=true; el.dataset.raw=''; applyFmt(el); } });
 
-      // ── 數量制事件綁定（select 疊在膠囊上，直接 change）──
       buildQtySelectors();
       Object.keys(QTY_ITEMS).forEach(target=>{
         const sel=document.getElementById('qty_sel_'+target);
@@ -1304,7 +1202,6 @@
           calculatePV();
         });
       });
-      // 延長授權實收欄（recv_extend）綁定，比照 num-input
       const recvExt=document.getElementById('recv_extend');
       if(recvExt){
         recvExt.addEventListener('focus',onFocus);
