@@ -771,7 +771,8 @@
           el.disabled=!addonOpen;
           if(!addonOpen){ el.dataset.raw=''; applyFmt(el); }
           const hasVal=(el.dataset.raw??'')!=='';
-          if(xGtBase&&!hasVal){ el.placeholder='若訂單有出現則需要填上金額'; el.classList.add('placeholder-warn'); }
+          // 只要欄位開放且空白（含短收/無溢收），都顯示橘色提醒
+          if(addonOpen&&!hasVal){ el.placeholder='若訂單有出現則需要填上金額'; el.classList.add('placeholder-warn'); }
           else { el.placeholder='標準定價'; el.classList.remove('placeholder-warn'); }
         });
         ['y_extend','y_servicefee'].forEach(id=>{
